@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/input_title"/>
+
+    <com.amap.api.maps2d.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </com.amap.api.maps2d.MapView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <Button
+            android:id="@+id/near"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="附近"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            />
+        <Button
+            android:id="@+id/route"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="路线"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"
+            />
+        <Button
+            android:id="@+id/my"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="我的"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"
+            />
+    </LinearLayout>
+</LinearLayout>

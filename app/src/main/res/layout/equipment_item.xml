@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+        <ImageView
+            android:id="@+id/header_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/header_icon"/>
+        <TextView
+            android:id="@+id/equipment_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="设备昵称"
+            android:textColor="@color/white"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="在线"
+            android:textSize="15sp"
+            android:layout_gravity="bottom"
+            android:layout_margin="15dp"
+            android:textColor="@color/white"
+            android:visibility="gone"/>
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+       <ImageView
+           android:id="@+id/ic_lockimg"
+           android:layout_width="25dp"
+           android:layout_height="25dp"
+           android:background="@drawable/ic_lock_open_black"
+           android:layout_centerVertical="true"
+           android:layout_marginLeft="15dp"/>
+
+        <ImageView
+            android:id="@+id/chg_adminpwd_img"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ic_info_outline_black"
+            android:layout_toLeftOf="@+id/videocan_img"
+            android:layout_marginRight="15dp"
+            android:layout_centerVertical="true"/>
+
+        <ImageView
+            android:id="@+id/videocan_img"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ic_videocam_black"
+            android:layout_toLeftOf="@+id/setting_img"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            />
+
+        <ImageView
+            android:id="@+id/setting_img"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ic_settings_black"
+            android:layout_toLeftOf="@+id/broder_img"
+            android:layout_marginRight="15dp"
+            android:layout_centerVertical="true"
+            />
+
+        <ImageView
+            android:id="@+id/broder_img"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ic_border_color_black"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/gray"
+        android:layout_alignParentBottom="true"/>
+</LinearLayout>

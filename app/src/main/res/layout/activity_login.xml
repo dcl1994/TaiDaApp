@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/images_login_bg">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp">
+        <ImageView
+            android:layout_width="98dp"
+            android:layout_height="66dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/images_app_logo" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp">
+        <include layout="@layout/input_layout"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/forgetpwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="忘记密码"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:layout_marginRight="35dp"
+        android:layout_gravity="right"/>
+
+    <Button
+        android:id="@+id/login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/login_bg"/>
+
+    <TextView
+        android:id="@+id/register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/set_up"
+        android:layout_gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/or"
+        android:textColor="@color/white"
+        android:layout_gravity="center"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"/>
+
+    <Button
+        android:id="@+id/wx_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/wx_login"
+        android:textSize="16sp"
+        android:textColor="@color/blackmin"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/wxlogin_bg"
+        />
+</LinearLayout>

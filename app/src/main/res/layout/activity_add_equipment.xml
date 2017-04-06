@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.siyann.taidaapp.AddEquipmentActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/white">
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/back_bg"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"/>
+        <TextView
+            android:id="@+id/title_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="18sp"
+            android:text="@string/addequipment"
+            android:textColor="@color/blackmin"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="10dp">
+        <EditText
+            android:id="@+id/equipment_name"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="请输入设备昵称"
+            android:textSize="14sp"
+            />
+        <EditText
+            android:id="@+id/equipment_id"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="请输入设备ID"
+            android:textSize="14sp"
+            />
+        <EditText
+            android:id="@+id/equipment_pwd"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="请输入设备连接密码"
+            android:textSize="14sp"
+            />
+        <Button
+            android:id="@+id/add_equp"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/button_bg"
+            android:text="添加"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">泰达时尚家园</string>
+    <string name="title_activity_app_start">AppStartActivity</string>
+    <string name="title_activity_appstart">AppstartActivity</string>
+    <string name="action_settings">settings</string>
+    <string name="login">登录</string>
+    <string name="wx_login">微信登录</string>
+    <string name="set_up">注册账号</string>
+    <string name="register">注册</string>
+    <string name="or">------------------ OR ------------------</string>
+    <string name="main">首页</string>
+    <string name="intro">泰达时尚家园</string>
+    <string name="companyname">天津泰达有线电视网络有限公司</string>
+    <string name="companyurl"><a href="#" mce_href="#">http://www.bhdtv.net/</a></string>
+    <string name="addequipment">添加设备</string>
+    <string name="addonline">智能联机</string>
+    <string name="equipmentlist">设备列表</string>
+    <string name="register_format">密码长度要大于6位小于30位</string>
+    <string name="newuser"><a href="#" mce_href="#">我是新用户</a></string>
+</resources>

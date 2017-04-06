@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ArrowRectangleView">
+        <!--箭头宽度-->
+        <attr name="arrow_width" format="dimension"/>
+
+        <!--箭头高度-->
+        <attr name="arrow_height" format="dimension"/>
+
+        <!--箭头水平偏移-->
+        <attr name="arrow_offset" format="dimension"/>
+
+        <!--圆角半径-->
+        <attr name="radius" format="dimension" />
+
+
+        <!--菜单背景色-->
+        <attr name="background_color" format="color" />
+
+        <!--阴影色-->
+        <attr name="shadow_color" format="color" />
+
+        <!--阴影厚度-->
+        <attr name="shadow_thickness" format="dimension" />
+
+    </declare-styleable>
+</resources>

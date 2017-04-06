@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <include layout="@layout/input_title"/>
+    <RelativeLayout
+        android:id="@+id/rl_p2pview"
+        android:layout_width="match_parent"
+        android:layout_height="250dp">
+        <com.p2p.core.P2PView
+            android:id="@+id/p2pview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/layout_else"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+    <ImageView
+        android:id="@+id/volume_img"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:src="@drawable/volumebg"
+        android:layout_gravity="center_vertical"
+        />
+        <ImageView
+            android:id="@+id/iv_last"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_skip_previous_black"
+            android:layout_gravity="center_vertical"
+            />
+        <ImageView
+            android:id="@+id/iv_next"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_skip_next_black"
+            android:layout_gravity="center_vertical"
+            />
+
+     <ImageView
+         android:id="@+id/fullscreen_img"
+         android:layout_width="0dp"
+         android:layout_height="wrap_content"
+         android:layout_weight="1"
+         android:src="@drawable/fullscreen_bg"
+         android:layout_gravity="center_vertical"
+         />
+    </LinearLayout>
+
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/gray"
+            android:layout_alignParentBottom="true"/>
+
+        <!--设备监控功能-->
+        <RelativeLayout
+            android:id="@+id/rl_control"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5.3"
+            android:background="#f6f7f8"
+            >
+            <ImageView
+                android:id="@+id/iv_speak"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_margin="10dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/portrait_speak"
+                />
+            <ImageView
+                android:id="@+id/iv_defence"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_toLeftOf="@+id/iv_speak"
+                android:layout_centerVertical="true"
+                android:background="@drawable/selector_portrait_disarm"
+                />
+            <ImageView
+
+                android:id="@+id/iv_screenshot"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_toRightOf="@+id/iv_speak"
+                android:layout_centerVertical="true"
+                android:background="@drawable/selector_portrait_screenshot"/>
+        </RelativeLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/blackmin"
+            />
+    </ScrollView>
+        </LinearLayout>
+</LinearLayout>

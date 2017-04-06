@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.siyann.taidaapp">
+
+    <!-- 截图相关 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 对讲及双向视屏时需要此权限 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- 微信权限 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!-- 高德地图权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <application
+        android:name="utils.MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme.NoActionBar">
+
+        <!-- 配置你的高德地图的key 和service -->
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="002ffe41d1c1af282b6fa9fa94669bd3" />
+
+        <service android:name="com.amap.api.location.APSService" />
+
+        <activity android:name=".MainActivity" />
+        <activity android:name=".Appstart">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:launchMode="singleTop" />
+        <activity android:name=".DetailsActivity" />
+        <activity android:name=".FindPassword" />
+        <activity android:name=".ChangePassword" />
+        <activity android:name=".RegisterActivity" />
+        <activity
+            android:name=".MonitoerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" />
+        <activity android:name=".EquipmentActivity" />
+        <activity android:name=".AddEquipmentActivity" />
+        <activity android:name=".RecordFilesActivity" />
+        <activity android:name=".TvLiveActivity" />
+        <activity android:name=".ProgramListActivity" />
+        <!-- 注册微信登录页面，exported设置为true表示允许其他应用访问 -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent" />
+        <activity
+            android:name=".BoundWeixinActivity"
+            android:launchMode="singleTop" />
+        <activity android:name=".MapActivity" />
+        <activity android:name=".ConveniencePhoneActivity" />
+        <activity android:name=".ExpressCheckActivity"></activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:id="@+id/relative"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true">
+    <!--service_customers(便民服务)   Community_affairs(社区政务)-->
+        <TextView
+            android:id="@+id/service_customers"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="便民服务"
+            android:textSize="16sp"
+            android:textColor="@color/blue_main"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="45dp"
+            android:layout_centerVertical="true"/>
+
+    <ImageView
+        android:id="@+id/service_customersimg"
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:layout_below="@+id/service_customers"
+        android:background="@drawable/tab"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="15dp"
+        />
+        <TextView
+            android:id="@+id/community_affairs"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="社区政务"
+            android:textColor="@color/blackmin"
+            android:textSize="16sp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="45dp"
+            android:layout_centerVertical="true"/>
+    <ImageView
+        android:id="@+id/community_affairsimg"
+        android:layout_width="50dp"
+        android:layout_height="2dp"
+        android:layout_below="@+id/community_affairs"
+        android:background="@drawable/tab"
+        android:layout_marginRight="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="15dp"
+        android:visibility="gone"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/zone_list_header"
+            android:layout_alignParentBottom="true"/>
+</RelativeLayout>
+</LinearLayout>

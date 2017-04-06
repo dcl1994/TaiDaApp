@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="green">#60aa24</color>
+    <color name="red">#da0b42</color>
+    <color name="green_listview">#7eda6b</color>
+    <color name="editbg">#e2e2e2</color>
+    <color name="griditems_bg">#ffe8ecef</color>
+    <color name="commo_text_color">#ff333333</color>
+    <color name="text_color">#373434</color>
+    <color name="line">#ffd3dde6</color>
+    <color name="zone_bg">#fff2f2f2</color>
+    <color name="white">#ffffffff</color>
+    <color name="transparent">#00000000</color>
+    <color name="zone_list_username">#ffffff</color>
+    <color name="zone_search_hint">#fff5b9cd</color>
+    <color name="zone_list_header">#ffcbcbcb</color>
+    <color name="gray">#ecebeb</color>
+    <color name="black">#000000</color>
+    <color name="blackmin">#484545</color>
+    <color name="qrcodebg">#2e3132</color>
+    <color name="blue">#ff4f9cda</color>
+    <color name="blue_main">#4b9be0</color>
+    <color name="blue_bottom">#6cc4dc</color>
+    <color name="yellow">#FFDECB83</color>
+    <!-- 上传图片添加的颜色 -->
+    <color name="none_color">#00000000</color>
+    <color name="plugin_camera_black">#000000</color>
+    <color name="albumback">#E1E0DE</color>
+    <color name="style_red">#ff4c41</color>
+    <color name="style_divider_color">#C9C7CD</color>
+    <color name="linecolor">#e2e2e2</color>
+</resources>
