@@ -13,7 +13,6 @@
             android:id="@+id/nav_yimi"
             android:icon="@drawable/yimi"
             android:title="一米菜园"
-            android:visible="false"
             />
         <item
             android:id="@+id/nav_exit"

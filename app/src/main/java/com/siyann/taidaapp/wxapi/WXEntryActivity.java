@@ -40,9 +40,12 @@ import utils.MyApplication;
  * Created by szjdj on 2017-04-01.
  */
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
-    private static final String APP_SECRET = "9243891dc07af1dc860cd0b3d4b47b36";
+//    private static final String APP_SECRET = "9243891dc07af1dc860cd0b3d4b47b36";
+    private static final String APP_SECRET = "35b0f28236bdcc1b78cd8e0249b8db01";
+
     private IWXAPI mWeixinAPI;
-    public static final String WEIXIN_APP_ID = "wxeb75e53c13238e4e";
+//    public static final String WEIXIN_APP_ID = "wxeb75e53c13238e4e";
+    public static final String WEIXIN_APP_ID = "wx4a7556c9cfb27cc9";
 
     private String username="";    //用户名
     private String password="";    //密码
@@ -186,10 +189,7 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                 + openid;
         LogUtil.e("getUserMesg", path);
 
-        Request .Builder builder=new Request.Builder();
-        /**
-         * 构造request
-         */
+        Request.Builder builder=new Request.Builder();
         /**
          * 构造request
          */

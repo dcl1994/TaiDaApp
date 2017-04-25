@@ -3,7 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-
+    <color name="alpha">#00000000</color>
+    <color name="playback_btn_p">#e0f7f7f7</color>
     <color name="green">#60aa24</color>
     <color name="red">#da0b42</color>
     <color name="green_listview">#7eda6b</color>

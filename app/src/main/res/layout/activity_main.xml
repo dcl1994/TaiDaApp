@@ -66,10 +66,7 @@
                 android:textSize="12sp"
                 android:textColor="@color/blackmin"
                 android:layout_toLeftOf="@+id/weather_img"
-                android:layout_centerVertical="true"
-
-                />
-
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
         <!--图片轮播框架-->
         <com.youth.banner.Banner

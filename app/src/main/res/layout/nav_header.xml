@@ -14,8 +14,8 @@
         android:id="@+id/icon_img"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:src="@drawable/ic_launcher"
         android:layout_margin="10dp"
+        android:src="@drawable/taida"
         />
     <TextView
         android:id="@+id/name"

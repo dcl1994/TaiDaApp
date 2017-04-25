@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/green_listview"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ll_pag01"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@color/white">
+
+            <TextView
+                android:id="@+id/tv_pag01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="蔬菜"
+                android:textColor="@color/blackmin"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_pag02"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_pag02"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="菌类"
+                android:textColor="@color/white"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_pag03"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_pag03"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="豆类"
+                android:textColor="@color/white"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/ll_pag04"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_pag04"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="谷类"
+                android:textColor="@color/white"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_pag05"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tv_pag05"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="水果"
+                android:textColor="@color/white"
+                android:textSize="16sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--中间内容的滚动组件-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/coment_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+
+</LinearLayout>

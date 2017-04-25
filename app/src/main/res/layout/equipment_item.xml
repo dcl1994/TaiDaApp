@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
     <FrameLayout
         android:layout_width="match_parent"
@@ -17,7 +17,9 @@
             android:layout_height="wrap_content"
             android:text="设备昵称"
             android:textColor="@color/white"
-            android:layout_margin="10dp"/>
+            android:layout_margin="10dp"
+            android:textSize="16sp"
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,49 +36,53 @@
         android:layout_height="50dp">
        <ImageView
            android:id="@+id/ic_lockimg"
-           android:layout_width="25dp"
-           android:layout_height="25dp"
+           android:layout_width="30dp"
+           android:layout_height="30dp"
            android:background="@drawable/ic_lock_open_black"
            android:layout_centerVertical="true"
-           android:layout_marginLeft="15dp"/>
+           android:layout_marginLeft="15dp"
+           android:visibility="gone"
+           />
 
         <ImageView
             android:id="@+id/chg_adminpwd_img"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="@drawable/ic_info_outline_black"
             android:layout_toLeftOf="@+id/videocan_img"
             android:layout_marginRight="15dp"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            />
 
         <ImageView
             android:id="@+id/videocan_img"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/ic_videocam_black"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/videocan_bg"
             android:layout_toLeftOf="@+id/setting_img"
             android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="20dp"
             />
 
         <ImageView
             android:id="@+id/setting_img"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/ic_settings_black"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/setting_bg"
             android:layout_toLeftOf="@+id/broder_img"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="20dp"
             android:layout_centerVertical="true"
             />
 
         <ImageView
             android:id="@+id/broder_img"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/ic_border_color_black"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/broder_bg"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="15dp"
+            android:layout_marginRight="20dp"
             />
     </RelativeLayout>
 

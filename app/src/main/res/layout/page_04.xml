@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zone_bg"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/abaout"
+        android:textColor="@color/red"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:id="@+id/ll_username"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/linearlayout_bg"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="15dp"
+            android:text="名字"
+            android:textColor="@color/blackmin"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="130dp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/images_arrow_ic" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/linecolor" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_phone"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/linearlayout_bg"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="15dp"
+            android:text="联系电话"
+            android:textColor="@color/blackmin"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="100dp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/images_arrow_ic" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/linecolor" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_address"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@drawable/linearlayout_bg"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="15dp"
+            android:text="地址"
+            android:textColor="@color/blackmin"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="130dp"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/images_arrow_ic" />
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/linecolor" />
+</LinearLayout>

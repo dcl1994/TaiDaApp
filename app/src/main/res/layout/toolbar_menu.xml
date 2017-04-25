@@ -34,19 +34,19 @@
 
 </LinearLayout>
 
-    <!--<LinearLayout-->
-        <!--android:id="@+id/menu02"-->
-        <!--android:layout_height="42dp"-->
-        <!--android:layout_width="wrap_content">-->
-    <!--<TextView-->
-        <!--android:paddingRight="32dp"-->
-        <!--android:paddingLeft="16dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:text="@string/addonline"-->
-        <!--android:clickable="false"-->
-        <!--android:textColor="#FF393F4A"-->
-        <!--android:textSize="16sp"-->
-        <!--android:layout_gravity="center_vertical"/>-->
-<!--</LinearLayout>-->
+    <LinearLayout
+        android:id="@+id/menu02"
+        android:layout_height="42dp"
+        android:layout_width="wrap_content">
+    <TextView
+        android:paddingRight="32dp"
+        android:paddingLeft="16dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/addonline"
+        android:clickable="false"
+        android:textColor="#FF393F4A"
+        android:textSize="16sp"
+        android:layout_gravity="center_vertical"/>
+</LinearLayout>
 </widget.ArrowRectangleView>

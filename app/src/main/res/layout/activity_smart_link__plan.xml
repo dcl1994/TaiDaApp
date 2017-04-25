@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#e0e0e0"
+    tools:context="com.siyann.taidaapp.SmartLinkActivity">
+
+    <include layout="@layout/input_title"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="连接好电源"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/intelligentonline"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/smartlinkinfo"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:layout_marginTop="70dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/smartlinkinfo2"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textSize="16sp"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/btn_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/login_bg"
+        android:layout_marginTop="120dp"
+        android:text="下一步"
+        android:textSize="16sp"
+        android:textColor="@color/white"/>
+</LinearLayout>

@@ -7,15 +7,19 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.media.AudioManager;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.OrientationEventListener;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,102 +29,204 @@ import com.p2p.core.P2PHandler;
 import com.p2p.core.P2PValue;
 import com.p2p.core.P2PView;
 
+import java.io.File;
+
 import utils.LogUtil;
 
 /**
  * 监控的界面,登录成功后才可以进入
  */
-public class MonitoerActivity extends BaseMonitorActivity implements View.OnClickListener {
+public class MonitoerActivity extends BaseMonitorActivity implements View.OnClickListener{
+
     public static String P2P_ACCEPT = "com.XXX.P2P_ACCEPT";
+
     public static String P2P_READY = "com.XXX.P2P_READY";
+
     public static String P2P_REJECT = "com.XXX.P2P_REJECT";
 
     private Context mContext;
+
     private ImageView mImageView;   //返回按钮
-    private TextView mTextView;     //标题
 
     private RelativeLayout rlP2pview;
 
-    private String equipmentname="";    //设备昵称
-    private String equipmentid="";      //设备ID
-    private String equipmentpwd="";     //设备密码
+    private String equipmentname = "";    //设备昵称
 
+    private String equipmentid = "";      //设备ID
 
-    private ImageView volume;   //声音
+    private String equipmentpwd = "";     //设备密码
 
+    private ImageView volume;            //静音按键
 
     private ImageView btnTalk;         //视频对讲
+
     private String LoginID;             //登录ID
+
     private int screenWidth, screenHeigh;
+
     private TextView tvContent;
-    private LinearLayout layoutElse;
+
+    private LinearLayout l_control;
 
     SharedPreferences sharedPreferences;
 
-    OrientationEventListener mOrientationEventListener;
+    private RelativeLayout mrelative;   //标题栏
 
-    private boolean mIsLand = false;
+    private RelativeLayout control_bottom;  //被隐藏的底部栏
 
-    private Button call_btn;    //连接
+    private ProgressBar progressBar;    //加载控件
+
+    private TextView mtextView;         //login。。。
+
+    private ImageView send_voice;
+
+    private ImageView iv_half_screen;   //底部菜单栏的按钮
+
+    private Button mvideo;              //视频清晰度切换按钮
+
+    private LinearLayout control_top;   //视频清晰度列表
+
+    private TextView video_mode_hd;     //高清
+
+    private TextView video_mode_sd;     //标清
+
+    private TextView video_mode_ld;     //流畅
+
+    private ImageView locking;             //锁定
+
+    private ImageView fullscreenimg;    //横竖屏切换按钮
+
+    private ImageView screenshot;       //截图键
+
+
+    private boolean mIsLand = false;    //横竖屏切换
+
+    private boolean isMute = false;     //声音
+
+    private boolean ischeck = false;    //清晰度切换的标志
+
+    private boolean islocking=false;    //锁定设备的按钮
+
+    private ImageView close_voice;      //静音键
+
+
+    private  String ischecked;      //获取设备列表传递过来的布防状态
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_monitoer);
-        mContext=MonitoerActivity.this;
+        mContext = MonitoerActivity.this;
         init();
         initUI();
         getScreenWithHeigh();
         regFilter();
-        initData();
+
 
         CallOnClick();  //连接设备
 
+        Intent intent=getIntent();
+        ischecked=intent.getStringExtra("ischecked");
+        LogUtil.e("ischecked", ischecked);
+
     }
+
+
+    /**
+     * 过一段时间再进来的时候会自动挂断视频连接
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+        P2PHandler.getInstance().reject();
+        Toast.makeText(mContext, "挂断", Toast.LENGTH_SHORT).show();
+        finish();
+    }
+
     private void init() {
+        /**
+         * 底部栏的静音键
+         */
+        close_voice= (ImageView) findViewById(R.id.close_voice);
+        close_voice.setOnClickListener(this);
+        /**
+         * 截图按键
+         */
+        screenshot= (ImageView) findViewById(R.id.iv_screenshot);
+        screenshot.setOnClickListener(this);
 
         /**
-         * 连接设备
+         * 锁定设备的按键
          */
-        call_btn= (Button) findViewById(R.id.Call);
-        call_btn.setVisibility(View.VISIBLE);
-        call_btn.setOnClickListener(this);
+        locking= (ImageView) findViewById(R.id.iv_defence);
+        locking.setOnClickListener(this);
+
+        control_top = (LinearLayout) findViewById(R.id.control_top);
+        /**
+         * 视频切换清晰度按钮
+         */
+        mvideo = (Button) findViewById(R.id.choose_video_format);
+        mvideo.setOnClickListener(this);
 
 
-        rlP2pview= (RelativeLayout) findViewById(R.id.rl_p2pview);
+        /**
+         * 调整视频清晰度
+         */
+        video_mode_hd= (TextView) findViewById(R.id.video_mode_hd);
+        video_mode_hd.setOnClickListener(this);
+
+        video_mode_sd= (TextView) findViewById(R.id.video_mode_sd);
+        video_mode_sd.setOnClickListener(this);
+
+        video_mode_ld= (TextView) findViewById(R.id.video_mode_ld);
+        video_mode_ld.setOnClickListener(this);
+        /**
+         * 底部菜单栏的按钮
+         */
+        iv_half_screen = (ImageView) findViewById(R.id.iv_half_screen);
+        iv_half_screen.setOnClickListener(this);
+
+        progressBar = (ProgressBar) findViewById(R.id.prg_monitor);
+        mtextView = (TextView) findViewById(R.id.tx_wait_for_connect);
+
+        control_bottom = (RelativeLayout) findViewById(R.id.control_bottom);
+
+        l_control = (LinearLayout) findViewById(R.id.l_control);
+
+        mrelative = (RelativeLayout) findViewById(R.id.relative_title);
+        /**
+         * 横竖屏切换按钮
+         */
+        fullscreenimg = (ImageView) findViewById(R.id.iv_full_screen);
+        fullscreenimg.setOnClickListener(this);
+
+        rlP2pview = (RelativeLayout) findViewById(R.id.r_p2pview);  //p2pview的父控件
         /**
          * 从缓存中取出设备的昵称，ID，密码
          */
-        sharedPreferences=getSharedPreferences("data", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
 
+        equipmentname = sharedPreferences.getString("equipmentname", "");
+        LogUtil.e("equipmentname", equipmentname);
 
-        equipmentname=sharedPreferences.getString("equipmentname", "");
-        LogUtil.e("equipmentname",equipmentname);
+        equipmentpwd = sharedPreferences.getString("equipmentpwd", "");
 
-        equipmentpwd=sharedPreferences.getString("equipmentpwd","");
+        mImageView = (ImageView) findViewById(R.id.back);
 
-
-        mImageView= (ImageView) findViewById(R.id.back);
         mImageView.setOnClickListener(this);
 
-        btnTalk= (ImageView) findViewById(R.id.iv_speak);
-
-        mTextView= (TextView) findViewById(R.id.title_view);
-        Intent intent=getIntent();
-        String title= intent.getStringExtra("title");
-        mTextView.setText(title);
-
-        tvContent= (TextView) findViewById(R.id.tv_content);
-
-
-        layoutElse= (LinearLayout) findViewById(R.id.layout_else);
-
-
+        btnTalk = (ImageView) findViewById(R.id.iv_speak);
         /**
          * 静音
          */
-        volume= (ImageView) findViewById(R.id.volume_img);
+        volume = (ImageView) findViewById(R.id.iv_voice);
         volume.setOnClickListener(this);
+
+        close_voice = (ImageView) findViewById(R.id.close_voice);
+        close_voice.setOnClickListener(this);
+        send_voice = (ImageView) findViewById(R.id.send_voice);
+        send_voice.setOnClickListener(this);
     }
 
     private void getScreenWithHeigh() {
@@ -130,6 +236,7 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         screenWidth = dm.widthPixels;
         screenHeigh = dm.heightPixels;
     }
+
 
     private void initUI() {
         //pView已在父类声明，不要在子类重复
@@ -141,8 +248,10 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         setMute(false);
+
                         return true;
                     case MotionEvent.ACTION_UP:
+
                         setMute(true);
                         return true;
                 }
@@ -151,37 +260,13 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         });
     }
 
-    private void initData() {
-        //此处是一种并不常见的横竖屏监听,客户可自行修改实现
-        mOrientationEventListener = new OrientationEventListener(this) {
-            @Override
-            public void onOrientationChanged(int rotation) {
-                // 设置横屏
-                if (((rotation >= 0) && (rotation <= 30)) || (rotation >= 330)) {
-                    if (mIsLand) {
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                        mIsLand = false;
-                        setHalfScreen(true);
-                    }
-                } else if (((rotation >= 230) && (rotation <= 310))) {
-                    if (!mIsLand) {
-                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                        mIsLand = true;
-                        setHalfScreen(false);
-                    }
-                }
-            }
-        };
-        mOrientationEventListener.enable();
-    }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Log.e("dxsTest", "config:" + newConfig.orientation);
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             setHalfScreen(false);
-            layoutElse.setVisibility(View.GONE);
+            l_control.setVisibility(View.GONE);
             //以下代码是因为 方案商设备类型很多,视频比例也比较多
             //客户更具自己的视频比例调整画布大小
             //这里的实现比较绕,如果能弄清楚这部分原理,客户可自行修改此处代码
@@ -208,7 +293,7 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
             rlP2pview.setLayoutParams(parames);//调整画布容器宽高(比例)
         } else {
             setHalfScreen(true);
-            layoutElse.setVisibility(View.VISIBLE);
+            l_control.setVisibility(View.VISIBLE);
             if (isFullScreen) {
                 isFullScreen = false;
                 pView.halfScreen();
@@ -222,9 +307,6 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
             rlP2pview.setLayoutParams(parames);
         }
     }
-
-
-
 
     private void regFilter() {
         IntentFilter filter = new IntentFilter();
@@ -241,42 +323,41 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
                 int[] type = intent.getIntArrayExtra("type");
                 P2PView.type = type[0];
                 P2PView.scale = type[1];
-                tvContent.append("\n 监控数据接收");
+              //  tvContent.append("\n 监控数据接收");
                 LogUtil.e("dxsTest", "监控数据接收:" + equipmentid);
                 P2PHandler.getInstance().openAudioAndStartPlaying(1);//打开音频并准备播放，calllType与call时type一致
             } else if (intent.getAction().equals(P2P_READY)) {
-                tvContent.append("\n 监控准备,开始监控");
+                //tvContent.append("\n 监控准备,开始监控");
                 LogUtil.e("dxsTest", "监控准备,开始监控" + equipmentid);
+                /**
+                 * 隐藏progressbar和login
+                 */
+                progressBar.setVisibility(View.GONE);
+                mtextView.setVisibility(View.GONE);
+
                 pView.sendStartBrod();
             } else if (intent.getAction().equals(P2P_REJECT)) {
-                tvContent.append("\n 监控挂断");
+               // tvContent.append("\n 监控挂断");
+                LogUtil.e("dxsTest", "监控挂断" + equipmentid);
             }
         }
     };
-
 
     @Override
     public void onDestroy() {
         unregisterReceiver(mReceiver);
         P2PHandler.getInstance().reject();
         super.onDestroy();
-
     }
-
     @Override
     protected void onCaptureScreenResult(boolean isSuccess, int prePoint) {
         if (isSuccess) {
-            Toast.makeText(mContext,"连接设备成功",Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(mContext,"连接设备失败",Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "连接设备成功", Toast.LENGTH_SHORT).show();
         }
     }
-
     @Override
     protected void onVideoPTS(long videoPTS) {
-
     }
-
 
     @Override
     protected void onP2PViewSingleTap() {
@@ -290,44 +371,202 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
 
     //连设备的方法
     private void CallOnClick() {
-        LoginID=sharedPreferences.getString("LoginID","");
-
-        LogUtil.e("LoginID",LoginID);
-        equipmentid=sharedPreferences.getString("equipmentid", "");
-
-        LogUtil.e("equipmentpwd",equipmentpwd);
-        LogUtil.e("equipmentid",equipmentid);
+        LoginID = sharedPreferences.getString("LoginID", "");
+        LogUtil.e("LoginID", LoginID);
+        equipmentid = sharedPreferences.getString("equipmentid", "");
+        LogUtil.e("equipmentid", equipmentid);
 
         String pwd = P2PHandler.getInstance().EntryPassword(equipmentpwd);//经过转换后的设备密码
         P2PHandler.getInstance().call(LoginID, pwd, true, 1, equipmentid, "", "", 2, equipmentid);
     }
+
     /**
      * 点击事件
+     *
      * @param v
      */
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.back:
                 finish();
                 break;
-
-            /**
-             * 连接设备
-             */
-            case R.id.Call:
-                CallOnClick();
-                break;
-
             /**
              * 静音
              */
-            case R.id.volume_img:
-            Toast.makeText(mContext,"静音",Toast.LENGTH_SHORT).show();
+            case R.id.iv_voice:
+                changeMuteState();
+                break;
+            /**
+             * 横竖屏切换
+             */
+            case R.id.iv_full_screen:
+                initData();
+                break;
+            /**
+             * 全屏底部菜单栏的全屏显示按钮的点击事件
+             */
+            case R.id.iv_half_screen:
+                initData();
                 break;
 
+            /**
+             * 清晰度切换的点击事件
+             */
+            case R.id.choose_video_format:
+                ischeck = !ischeck;
+                if (ischeck) {
+                    control_top.setVisibility(View.VISIBLE);
+                } else {
+                    control_top.setVisibility(View.GONE);
+                }
+                break;
+            /**
+             * 布防的点击事件
+             */
+            case R.id.iv_defence:
+                islocking=!islocking;
+                if (islocking){
+                    locking.setImageResource(R.drawable.selector_portrait_arm);
+                    Toast.makeText(v.getContext(),"布防",Toast.LENGTH_SHORT).show();
+                    P2PHandler.getInstance().setRemoteDefence(equipmentid, equipmentpwd, 1);
+                }else{
+                    locking.setImageResource(R.drawable.selector_portrait_disarm);
+                    Toast.makeText(v.getContext(),"撤防",Toast.LENGTH_SHORT).show();
+                    P2PHandler.getInstance().setRemoteDefence(equipmentid, equipmentpwd, 0);
+                }
+                break;
+
+            /**
+             * 截图的点击事件
+             */
+            case R.id.iv_screenshot:
+                Toast.makeText(mContext,"截图",Toast.LENGTH_SHORT).show();
+                ScreenShotClock();
+                break;
+            /**
+             * 高清
+             */
+            case R.id.video_mode_hd:
+                HDOnClick();
+                video_mode_hd.setTextColor(ContextCompat.getColor(this, R.color.blue));
+                video_mode_sd.setTextColor(ContextCompat.getColor(this, R.color.white));
+                video_mode_ld.setTextColor(ContextCompat.getColor(this, R.color.white));
+                mvideo.setText("高清");
+                control_top.setVisibility(View.GONE);
+                break;
+
+            /**
+             * 标清
+             */
+            case R.id.video_mode_sd:
+                SDOnclick();
+                video_mode_sd.setTextColor(ContextCompat.getColor(this, R.color.blue));
+                video_mode_ld.setTextColor(ContextCompat.getColor(this, R.color.white));
+                video_mode_hd.setTextColor(ContextCompat.getColor(this, R.color.white));
+                mvideo.setText("标清");
+                control_top.setVisibility(View.GONE);
+                break;
+
+            /**
+             * 流畅
+             */
+            case R.id.video_mode_ld:
+                LDOnClick();
+                video_mode_ld.setTextColor(ContextCompat.getColor(this, R.color.blue));
+                video_mode_sd.setTextColor(ContextCompat.getColor(this, R.color.white));
+                video_mode_hd.setTextColor(ContextCompat.getColor(this, R.color.white));
+                mvideo.setText("流畅");
+                control_top.setVisibility(View.GONE);
+                break;
+
+            /**
+             * 底部栏的静音键的点击事件
+             */
+            case R.id.close_voice:
+                changeMuteState();
+                break;
+            default:
+            break;
         }
     }
+
+    /**
+     * 流畅
+     */
+    void LDOnClick(){
+        P2PHandler.getInstance().setVideoMode(P2PValue.VideoMode.VIDEO_MODE_LD);
+    }
+
+    /**
+     * 标清
+     */
+    void SDOnclick(){
+        P2PHandler.getInstance().setVideoMode(P2PValue.VideoMode.VIDEO_MODE_SD);
+    }
+
+    /**
+     * 高清
+     */
+    void HDOnClick(){
+        P2PHandler.getInstance().setVideoMode(P2PValue.VideoMode.VIDEO_MODE_HD);
+    }
+
+
+    /**
+     * 自定义截图路径
+     */
+    void ScreenShotClock(){
+        // 参数是一个标记,截图回调会原样返回这个标记
+        //注意SD卡权限
+        File file=Environment.getExternalStorageDirectory();
+        int d = P2PHandler.getInstance().setScreenShotpath(file+"/sdcard/11/22/33", "123.jpg");
+        Log.e("dxsTest", "d:" + d);
+        captureScreen(-1);
+    }
+    /**
+     * 设置静音的方法
+     */
+    private void changeMuteState() {
+        isMute = !isMute;
+        AudioManager manager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        if (manager != null) {
+            if (isMute) {
+                manager.setStreamVolume(AudioManager.STREAM_MUSIC, manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+                volume.setImageResource(R.drawable.selector_half_screen_voice_open);
+                close_voice.setImageResource(R.drawable.m_voice_on);
+            } else {
+                manager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+                volume.setImageResource(R.drawable.selector_half_screen_voice_close);
+                close_voice.setImageResource(R.drawable.m_voice_off);
+            }
+        }
+    }
+
+
+    /**
+     * 横竖屏切换的方法
+     *
+     * @return
+     */
+    private void initData() {
+        mIsLand = !mIsLand;
+        if (mIsLand) {
+            //设置竖屏
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            mrelative.setVisibility(View.GONE);
+            control_bottom.setVisibility(View.VISIBLE);
+        } else {
+            this.getWindow().setFlags(0,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            // 设置横屏
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            mrelative.setVisibility(View.VISIBLE);
+            control_bottom.setVisibility(View.GONE);
+            control_top.setVisibility(View.GONE);
+        }
+    }
+
 
     @Override
     public int getActivityInfo() {

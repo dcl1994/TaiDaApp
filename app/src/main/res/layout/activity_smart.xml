@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SmartLinkActivity">
+
+    <include layout="@layout/input_title"/>
+
+
+    <LinearLayout
+        android:id="@+id/smartline_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/smartlink_network"
+        android:layout_margin="15dp"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/wifiname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="wifi name"
+        android:layout_gravity="center"
+        android:textSize="16sp"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/blue"/>
+
+    <LinearLayout
+        android:id="@+id/layout_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="15dp">
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/password"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="3dp"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:background="@color/linecolor" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/WiFiPwdWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/usernameWrapper">
+            <EditText
+                android:id="@+id/wifipwd"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="密码"
+                android:textSize="14sp"
+                android:inputType="textPassword"
+                android:layout_marginTop="20dp"/>
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_send"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/login_bg"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:text="连接"
+        android:textSize="16sp"
+        android:textColor="@color/white"/>
+</LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/smartlink_linear"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="等待连接"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/waite_add"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"/>
+        <ProgressBar
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/link"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="20dp"
+            android:textSize="16sp"
+            android:layout_gravity="left"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wait_link"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:textSize="16sp"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="left"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp">
+        <TextView
+            android:id="@+id/tx_receive"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/black"/>
+    </ScrollView>
+</LinearLayout>

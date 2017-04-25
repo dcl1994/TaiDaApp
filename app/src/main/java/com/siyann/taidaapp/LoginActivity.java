@@ -76,12 +76,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     /**
      * 点击事件
-     *
      * @param v
      */
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
             case R.id.login:
                 hideKeyboard(); //隐藏键盘
@@ -99,6 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     password_input.setErrorEnabled(false);
                     dologin();  //登录的方法
                 }
+//                dologin();
                 break;
 
             /**
@@ -112,7 +111,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     req.scope = "snsapi_userinfo";
                     req.state = "wechat_sdk_demo_test_neng";
                     mApi.sendReq(req);
-
                 } else {
                     Toast.makeText(this, "用户未安装微信", Toast.LENGTH_SHORT).show();
                 }
@@ -148,7 +146,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
         }
     }
-
     /**
      * 密码的判断
      *
@@ -160,23 +157,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
     /**
      * 登录的方法
-     *  //除了LoginResult、AccountInfoResult、GetStartInfoResult、
-     *  HttpData、MallUrlResult、ModifyLoginPasswordResult、SystemMessageResult
-     //其他都使用HttpResult
      */
     private void dologin() {
-        SubscriberListener <LoginResult> subscriberListener=new SubscriberListener<LoginResult>() {
+        SubscriberListener<LoginResult> subscriberListener=new SubscriberListener<LoginResult>() {
             @Override
             public void onStart() {
 
             }
-
             @Override
             public void onNext(LoginResult loginResult) {
                 switch (loginResult.getError_code()) {
                     case HttpErrorCode.ERROR_0:
-                        //注册成功
-
+                        //登录成功
                         //成功的逻辑不需要改成下面这样,以下仅演示过程
                         //原有的这部分代码可以不修改
                         //code1与code2是p2p连接的鉴权码,只有在帐号异地登录或者服务器强制刷新(一般不会干这件事)时才会改变
@@ -185,34 +177,42 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         int code2 = Integer.parseInt(loginResult.getP2PVerifyCode2());
                         //p2pconnect方法在APP一次生命周期中只需调用一次,退出后台结束时配对调用disconnect一次
                         boolean connect = P2PHandler.getInstance().p2pConnect(loginResult.getUserID(), code1, code2);
+                        LogUtil.e("code1", code1 + "");
+                        LogUtil.e("code2",code2+"");
+                        LogUtil.e("connect",connect+"");
                         if (connect) {
                             P2PHandler.getInstance().p2pInit(mContext, new P2PListener(), new SettingListener());
                             Intent callIntent = new Intent(MyApplication.app, MainActivity.class);
-                            Toast.makeText(mContext, "登录成功", Toast.LENGTH_LONG).show();
 
+                            Toast.makeText(mContext, "登录成功", Toast.LENGTH_LONG).show();
                             /**
                              * 获取用户名存缓存，实现一次登录就不需要重复登录的效果
                              */
                             String LoginID=loginResult.getUserID();
-                            LogUtil.e("LoginID", LoginID);
 
+                            LogUtil.e("LoginID", LoginID);
                             SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
                             editor.putString("username", username); //用户名
                             editor.putString("password",password);  //密码
                             editor.putString("LoginID", LoginID);    //拿到用户ID存缓存
                             editor.apply();
 
-
                             startActivity(callIntent);
+
+                            //跳转之后结束disconnect的调用
+                            P2PHandler.getInstance().p2pDisconnect();
                             finish();
                         } else {
                             //这里只是demo的写法,可加入自己的逻辑
                             //为false时p2p的功能不可用
-                            Toast.makeText(mContext,""+connect,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MyApplication.app,""+connect,Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case HttpErrorCode.ERROR_10901050:
                         Toast.makeText(mContext, "APP信息不正确", Toast.LENGTH_LONG).show();
+                        break;
+                    case HttpErrorCode.ERROR_10902011:
+                        Toast.makeText(mContext, "用户不存在", Toast.LENGTH_LONG).show();
                         break;
                     case HttpErrorCode.ERROR_10902003:
                         Toast.makeText(mContext, "密码错误", Toast.LENGTH_LONG).show();
@@ -230,8 +230,81 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         };
         HttpSend.getInstance().login("86-" + username, password, subscriberListener);
-    }
 
+
+
+
+//        /**
+//         * 使用第三方登录的方式登录，这是另外一种写法
+//         */
+//        try {
+//            HttpSend.getInstance().ThirdLogin("1","123456789","","","","3", new SubscriberListener<ThirdPartyLoginResult>() {
+//                @Override
+//                public void onStart() {
+//
+//                }
+//                @Override
+//                public void onNext(ThirdPartyLoginResult thirdPartyLoginResult) {
+//                    switch (thirdPartyLoginResult.getError_code()) {
+//                        case HttpErrorCode.ERROR_0:
+//                            //登录成功
+//                        //成功的逻辑不需要改成下面这样,以下仅演示过程
+//                        //原有的这部分代码可以不修改
+//                        //code1与code2是p2p连接的鉴权码,只有在帐号异地登录或者服务器强制刷新(一般不会干这件事)时才会改变
+//                        //所以可以将code1与code2保存起来,只需在下次登录时刷新即可
+//                        int code1 = Integer.parseInt(thirdPartyLoginResult.getP2PVerifyCode1());
+//                        int code2 = Integer.parseInt(thirdPartyLoginResult.getP2PVerifyCode2());
+//                        //p2pconnect方法在APP一次生命周期中只需调用一次,退出后台结束时配对调用disconnect一次
+//                        boolean connect = P2PHandler.getInstance().p2pConnect(thirdPartyLoginResult.getUserID(), code1, code2);
+//                        LogUtil.e("code1", code1 + "");
+//                        LogUtil.e("code2",code2+"");
+//                        LogUtil.e("connect",connect+"");
+//                            if (connect) {
+//                            P2PHandler.getInstance().p2pInit(mContext, new P2PListener(), new SettingListener());
+//                            Intent callIntent = new Intent(MyApplication.app, MainActivity.class);
+//                            Toast.makeText(mContext, "登录成功", Toast.LENGTH_LONG).show();
+//                            /**
+//                             * 获取用户名存缓存，实现一次登录就不需要重复登录的效果
+//                             */
+//                            String LoginID=thirdPartyLoginResult.getUserID();
+//                            LogUtil.e("LoginID", LoginID);
+//                            SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
+//                            editor.putString("username", username); //用户名
+//                            editor.putString("password",password);  //密码
+//                            editor.putString("LoginID", LoginID);    //拿到用户ID存缓存
+//                            editor.apply();
+//                            callIntent.putExtra("LoginID", thirdPartyLoginResult.getUserID());
+//                            startActivity(callIntent);
+//                            finish();
+//                        } else {
+//                            //这里只是demo的写法,可加入自己的逻辑
+//                            //为false时p2p的功能不可用
+//                            Toast.makeText(MyApplication.app,""+connect,Toast.LENGTH_SHORT).show();
+//                        }
+//                            break;
+//                        case HttpErrorCode.ERROR_10901020:
+//                            Toast.makeText(mContext,"缺少输入参数",Toast.LENGTH_SHORT).show();
+//                            break;
+//
+//                        default:
+//                            //其它错误码需要用户自己实现
+//                            String msg = String.format("注册测试版(%s)", thirdPartyLoginResult.getError_code());
+//                            Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
+//                            break;
+//                    }
+//                    }
+//                @Override
+//                public void onError(String error_code, Throwable throwable) {
+//
+//                }
+//            });
+//        } catch (UnsupportedEncodingException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        }
+
+    }
     /**
      * 隐藏键盘的方法
      */

@@ -45,9 +45,10 @@ public class ExpressCheckActivity extends Activity implements View.OnClickListen
     private ExpressAdapter adapter;
 
     private ListView mListView;
+//    private RecyclerView mrecyclerView;
 
-    private ExpressAddressAsyncTask asyncTask;
-    private SearchAsyncTask searchAsyncTask;
+    private ExpressAddressAsyncTask asyncTask;  //获取快递公司编码
+    private SearchAsyncTask searchAsyncTask;    //查询快递物流
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +75,7 @@ public class ExpressCheckActivity extends Activity implements View.OnClickListen
         express_view = (TextView) findViewById(R.id.express_view);
 
         mListView= (ListView) findViewById(R.id.mylist);
+//        mrecyclerView= (RecyclerView) findViewById(R.id.myrecycle);
     }
 
     @Override
@@ -95,7 +97,6 @@ public class ExpressCheckActivity extends Activity implements View.OnClickListen
                 break;
         }
     }
-    //602004117609586
     /**
      * 获取快递公司名称
      */
@@ -158,11 +159,18 @@ public class ExpressCheckActivity extends Activity implements View.OnClickListen
         }
     }
 
+
+    /**
+     * 将异步线程的生命周期与activity的生命周期绑定
+     */
     @Override
     protected void onPause() {
         super.onPause();
         if (asyncTask != null && asyncTask.getStatus() == AsyncTask.Status.RUNNING) {
             asyncTask.cancel(true);
+        }
+        if (searchAsyncTask!=null && searchAsyncTask.getStatus()==AsyncTask.Status.RUNNING){
+            searchAsyncTask.cancel(true);
         }
     }
 
@@ -170,7 +178,6 @@ public class ExpressCheckActivity extends Activity implements View.OnClickListen
      * 通过订单号查询物流详情
      */
     class SearchAsyncTask extends AsyncTask<Map,Void,JSONObject>{
-
         @Override
         protected JSONObject doInBackground(Map... params) {
             KdniaoTrackQueryAPI api = new KdniaoTrackQueryAPI();
@@ -190,15 +197,26 @@ public class ExpressCheckActivity extends Activity implements View.OnClickListen
         }
         @Override
         protected void onPostExecute(JSONObject jsonObject) {
+            if (isCancelled()) {
+                return;
+            }
             try {
+
+                /**
+                 * 拿到json中的Reason字段，该字段只有在出问题的时候才会返回
+                 * 根据Reason字段的值来进行业务逻辑判断
+                 */
                 String message=jsonObject.optString("Reason");
                 LogUtil.e("message",message);
                 if (TextUtils.isEmpty(message)){
                 JSONArray  jsonArray = jsonObject.getJSONArray("Traces");
                 LogUtil.e("jsonArray", jsonArray + "");
                 for (int i = 0; i < jsonArray.length(); i++) {
+//                    LinearLayoutManager manager=new LinearLayoutManager(mcontext);
+//                    mrecyclerView.setLayoutManager(manager);
                     adapter=new ExpressAdapter(mcontext,jsonArray);
                     mListView.setAdapter(adapter);
+//                    mrecyclerView.setAdapter(adapter);
                 }
             }else {
                     Toast.makeText(ExpressCheckActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -210,7 +228,5 @@ public class ExpressCheckActivity extends Activity implements View.OnClickListen
             super.onPostExecute(jsonObject);
         }
     }
-
-
 
 }

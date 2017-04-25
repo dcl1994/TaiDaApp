@@ -20,6 +20,7 @@ import com.p2p.core.P2PSpecial.HttpSend;
 
 import utils.LogUtil;
 import utils.MyApplication;
+import widget.GetAccountByPhoneNOResult;
 
 /**
  * 找回密码界面
@@ -41,7 +42,8 @@ public class FindPassword extends Activity implements View.OnClickListener {
     private String code;    //验证码
 
     SubscriberListener<HttpResult> subscriberListener;  //回调的监听
-    String VKey="01";    //鉴权码
+//    String VKey="d6a0d7a8b38f1371333c88c0377959606541459596276804345";    //鉴权码
+    String VKey;
     String ID;      //ID
 
     private SharedPreferences sharedPreferences;
@@ -94,19 +96,56 @@ public class FindPassword extends Activity implements View.OnClickListener {
                 if (TextUtils.isEmpty(phone)) {
                     Toast.makeText(mContext, "电话号码不能为空", Toast.LENGTH_SHORT).show();
                 }
-                    subscriberListener = new SubscriberListener<HttpResult>() {
-                        @Override
-                        public void onStart() {
+//                    subscriberListener = new SubscriberListener<HttpResult>() {
+//                        @Override
+//                        public void onStart() {
+//
+//                        }
+//                        @Override
+//                        public void onNext(HttpResult httpResult) {
+//                            switch (httpResult.getError_code()) {
+//                                case HttpErrorCode.ERROR_0:
+//                                    //注册成功
+//                                    Toast.makeText(mContext, "验证码发送成功", Toast.LENGTH_LONG).show();
+//                                    break;
+//                                case HttpErrorCode.ERROR_10901050:
+//                                    Toast.makeText(mContext, "APP信息不正确", Toast.LENGTH_LONG).show();
+//                                    break;
+//                                case HttpErrorCode.ERROR_10902025:
+//                                    Toast.makeText(mContext, "获取手机验证码太频繁", Toast.LENGTH_LONG).show();
+//                                    break;
+//                                case HttpErrorCode.ERROR_10902026:
+//                                    Toast.makeText(mContext, "获取手机验证码已到达上限", Toast.LENGTH_LONG).show();
+//                                    break;
+//                                default:
+//                                    //其它错误码需要用户自己实现
+//                                    String msg = String.format("注册测试版(%s)", httpResult.getError_code());
+//                                    Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
+//                                    break;
+//                            }
+//                        }
+//                        @Override
+//                        public void onError(String error_code, Throwable throwable) {
+//
+//                        }
+//                    };
+//                    HttpSend.getInstance().getAccountByPhoneNO("86", phone, subscriberListener);
 
-                        }
-                        @Override
-                        public void onNext(HttpResult httpResult) {
-                            switch (httpResult.getError_code()) {
-                                case HttpErrorCode.ERROR_0:
-                                    //注册成功
-                                    Toast.makeText(mContext, "验证码发送成功", Toast.LENGTH_LONG).show();
-                                    break;
-                                case HttpErrorCode.ERROR_10901050:
+
+                //获取验证码的监听事件
+                SubscriberListener<GetAccountByPhoneNOResult> subscriberListener2=new SubscriberListener<GetAccountByPhoneNOResult>() {
+                    @Override
+                    public void onStart() {
+                    }
+                    @Override
+                    public void onNext(GetAccountByPhoneNOResult getAccountByPhoneNOResult) {
+                     switch(getAccountByPhoneNOResult.getError_code()){
+                         case HttpErrorCode.ERROR_0:
+                             Toast.makeText(mContext, "验证码发送成功", Toast.LENGTH_LONG).show();
+                             VKey=getAccountByPhoneNOResult.getVKey();
+                             LogUtil.e("VKey",VKey);
+                            break;
+                         case HttpErrorCode.ERROR_10901050:
                                     Toast.makeText(mContext, "APP信息不正确", Toast.LENGTH_LONG).show();
                                     break;
                                 case HttpErrorCode.ERROR_10902025:
@@ -117,17 +156,17 @@ public class FindPassword extends Activity implements View.OnClickListener {
                                     break;
                                 default:
                                     //其它错误码需要用户自己实现
-                                    String msg = String.format("注册测试版(%s)", httpResult.getError_code());
+                                    String msg = String.format("注册测试版(%s)", getAccountByPhoneNOResult.getError_code());
                                     Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
                                     break;
-                            }
                         }
-                        @Override
-                        public void onError(String error_code, Throwable throwable) {
+                    }
+                    @Override
+                    public void onError(String error_code, Throwable throwable) {
+                    }
+                };
 
-                        }
-                    };
-                    HttpSend.getInstance().getAccountByPhoneNO("86", phone, subscriberListener);
+                HttpSend.getInstance().getAccountByPhoneNO("86", phone, subscriberListener2);
                 break;
 
             /**
@@ -147,32 +186,38 @@ public class FindPassword extends Activity implements View.OnClickListener {
                     /**
                      * 确认验证码接口
                      */
-                    subscriberListener = new SubscriberListener<HttpResult>() {
+                   SubscriberListener<HttpResult> subscriberListener = new SubscriberListener<HttpResult>() {
                         @Override
                         public void onStart() {
                         }
-                        @Override
-                        public void onNext(HttpResult httpResult) {
-                            switch (httpResult.getError_code()) {
-                                case HttpErrorCode.ERROR_0:
-                                    Intent intent = new Intent(mContext, ChangePassword.class);
-                                    intent.putExtra("title", "修改密码");
-                                    intent.putExtra("VKey", VKey);
-                                    startActivity(intent);
-                                    break;
-                                case HttpErrorCode.ERROR_10901020:
-                                    Toast.makeText(mContext, "缺少输入参数", Toast.LENGTH_SHORT).show();
-                                    break;
-                                case HttpErrorCode.ERROR_41:
-                                    Toast.makeText(mContext, "操作数已达上限", Toast.LENGTH_SHORT).show();
-                                    break;
-                                default:
-                                    //其它错误码需要用户自己实现
-                                    String msg = String.format("注册测试版(%s)", httpResult.getError_code());
-                                    Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
-                                    break;
-                            }
-                        }
+
+                       @Override
+                       public void onNext(HttpResult httpResult) {
+                           switch (httpResult.getError_code()) {
+                               case HttpErrorCode.ERROR_0:
+                                   Intent intent = new Intent(mContext, ChangePassword.class);
+                                   intent.putExtra("title", "修改密码");
+                                   intent.putExtra("VKey", VKey);
+                                   startActivity(intent);
+                                   break;
+                               case HttpErrorCode.ERROR_10901020:
+                                   Toast.makeText(mContext, "缺少输入参数", Toast.LENGTH_SHORT).show();
+                                   break;
+                               case HttpErrorCode.ERROR_41:
+                                   Toast.makeText(mContext, "操作数已达上限", Toast.LENGTH_SHORT).show();
+                                   break;
+                               case HttpErrorCode.ERROR_10902014:
+                                   Toast.makeText(mContext, "重置密码链接无效", Toast.LENGTH_SHORT).show();
+
+                                   break;
+                               default:
+                                   //其它错误码需要用户自己实现
+                                   String msg = String.format("注册测试版(%s)", httpResult.getError_code());
+                                   Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
+                                   break;
+                           }
+                       }
+
                         @Override
                         public void onError(String error_code, Throwable throwable) {
                         }

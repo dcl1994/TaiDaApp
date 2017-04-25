@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout
+    android:id="@+id/Swipe_refresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+  <ScrollView
+      android:id="@+id/scrollview_ameter"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:background="@color/zone_bg">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/green_listview">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp">
+            <ImageView
+                android:id="@+id/city"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ameter_gardenmap"
+                android:layout_centerVertical="true"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="天津"
+                android:textColor="@color/white"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/city"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="250dp"
+            android:layout_height="30dp"
+            android:background="@drawable/gardentab_bg"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical">
+            <EditText
+                android:id="@+id/ameter_select"
+                android:layout_width="210dp"
+                android:layout_gravity="center_vertical"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/blackmin"
+                android:hint="请输入蔬菜名"
+                android:textColorHint="@color/blackmin"
+                android:textSize="13sp"/>
+            <ImageView
+                android:id="@+id/ameter_search"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/search_bg"
+                android:layout_gravity="center_vertical"/>
+        </LinearLayout>
+
+
+        <ImageView
+            android:id="@+id/ameter_email"
+            android:layout_width="30dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ameter_email"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"/>
+    </LinearLayout>
+
+    <com.youth.banner.Banner
+        android:id="@+id/ameter_banner"
+        android:layout_width="wrap_content"
+        android:layout_height="140dp"
+        app:title_textsize="14sp"
+        app:title_textcolor="#ffffff"
+        app:title_height="20dp"/>
+
+
+    <!--按钮栏-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:id="@+id/ll_group_buy"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/group_buying"
+                android:layout_gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="天天团"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/ll_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/price"
+                android:layout_gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="今日特价"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_gift"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/gift"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="积分抽奖"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_new"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/new_garden"
+                android:layout_gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="每周推荐"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:src="@drawable/title_img"
+        android:layout_marginTop="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="最新上架"
+        android:textColor="#f7d228"
+        android:layout_margin="10dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/cabbage"
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/carrot"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/tomato"/>
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="人气推荐"
+        android:textColor="@color/green"
+        android:layout_margin="10dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/cabbage"
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/carrot"/>
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/tomato"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/cabbage"
+            />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/carrot"/>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/tomato"/>
+    </LinearLayout>
+</LinearLayout>
+  </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>

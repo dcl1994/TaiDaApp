@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp">
+
+
+        <ImageView
+            android:id="@+id/cabbage_img"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp" />
+
+        <TextView
+            android:id="@+id/cabbage_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/cabbage_img"
+            android:text="name"
+            android:textColor="@color/blackmin"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/cabbage_coment"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cabbage_name"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/cabbage_img"
+            android:text="coment"
+            android:maxLines="3"/>
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cabbage_coment"
+            android:layout_marginLeft="15dp"
+            android:layout_toRightOf="@+id/cabbage_img"
+            android:text="¥"
+            android:textColor="@color/red"
+            android:textSize="18sp" />
+
+
+        <TextView
+            android:id="@+id/cabbage_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cabbage_coment"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/price"
+            android:text="5.0"
+            android:textColor="@color/red"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cabbage_coment"
+            android:layout_toRightOf="@+id/cabbage_price"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:text="/500g"
+            android:textColor="@color/red"
+            android:textSize="12sp"/>
+        <TextView
+            android:id="@+id/shop_numbersold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="已售"
+            android:layout_below="@+id/cabbage_price"
+            android:layout_toRightOf="@+id/cabbage_img"
+            android:layout_marginLeft="15dp"
+            />
+
+
+        <TextView
+            android:id="@+id/cabbage_numbersold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cabbage_price"
+            android:layout_toRightOf="@+id/shop_numbersold"
+            android:text="coment"/>
+
+        <ImageView
+            android:id="@+id/shoping_cart"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/shopping_cart_bg"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"/>
+    </RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/linecolor" />
+</LinearLayout>

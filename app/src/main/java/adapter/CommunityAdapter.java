@@ -23,6 +23,7 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         View serviceView;
+
         ImageView service_image;    //图片
         TextView service_title;    //标题
         TextView service_content;   //内容
@@ -33,6 +34,7 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
         public ViewHolder(View view) {
             super(view);
             serviceView = view;
+
             service_image = (ImageView) view.findViewById(R.id.item_img);
             service_title = (TextView) view.findViewById(R.id.item_title);
             service_content = (TextView) view.findViewById(R.id.item_content);

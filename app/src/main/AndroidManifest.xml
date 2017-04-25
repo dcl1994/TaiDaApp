@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.siyann.taidaapp">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.siyann.taidaapp"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <!-- 智能联机的依赖 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 
     <!-- 截图相关 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <!-- 对讲及双向视屏时需要此权限 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
@@ -14,11 +22,9 @@
 
     <!-- 高德地图权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 
     <application
@@ -27,7 +33,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/AppTheme.NoActionBar"
+        tools:replace="android:icon, android:theme">
 
         <!-- 配置你的高德地图的key 和service -->
         <meta-data
@@ -72,7 +79,20 @@
             android:launchMode="singleTop" />
         <activity android:name=".MapActivity" />
         <activity android:name=".ConveniencePhoneActivity" />
-        <activity android:name=".ExpressCheckActivity"></activity>
+        <activity android:name=".ExpressCheckActivity" />
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".AlarmActivity" />
+        <activity android:name=".SmartLinkActivity" />
+        <activity android:name=".SmartLink_PlanActivity" />
+        <activity android:name=".NicknameActivity" />
+        <activity android:name=".AddSensorActivity" />
+        <activity
+            android:name=".GardenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity android:name=".AddUsernameActivity" />
+        <activity android:name=".AddPhoneActivity" />
+        <activity android:name=".AddAddressActivity" />
+        <activity android:name=".TrafficQueryActivity"></activity>
     </application>
 
 </manifest>

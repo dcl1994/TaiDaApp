@@ -13,6 +13,7 @@ import com.siyann.taidaapp.DetailsActivity;
 import com.siyann.taidaapp.ExpressCheckActivity;
 import com.siyann.taidaapp.MapActivity;
 import com.siyann.taidaapp.R;
+import com.siyann.taidaapp.TrafficQueryActivity;
 
 import java.util.List;
 
@@ -76,8 +77,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
                 int position=holder.getAdapterPosition();
                 switch (position){
                     case 0:
-                        Intent intent=new Intent(view.getContext(), DetailsActivity.class);
-                        intent.putExtra("url","http://www.tiptimes.com/home_td/index.php/Home/Index/list_road.html");
+                        Intent intent=new Intent(view.getContext(), TrafficQueryActivity.class);
                         intent.putExtra("title","路况查看");
                         view.getContext().startActivity(intent);
                         break;

@@ -17,4 +17,20 @@
     <string name="equipmentlist">设备列表</string>
     <string name="register_format">密码长度要大于6位小于30位</string>
     <string name="newuser"><a href="#" mce_href="#">我是新用户</a></string>
+    <string name="waite_for_linke">Loading...</string>
+    <string name="smarttitle">连接好电源</string>
+    <string name="smartlinkinfo">接通电源，等待摄像头发出连接提示音</string>
+    <string name="smartlinkinfo2">如果没有听到连接提示音，请将摄像头复位"</string>
+    <string name="smartlink_network">摄像头需要连接的Wi-Fi(暂不支持5G网络)</string>
+    <string name="link">正在连接中...</string>
+    <string name="wait_link">请耐心等待，马上就要连接成功了.</string>
+
+
+    <!--一米菜园的字符集-->
+    <string name="home">首页</string>
+    <string name="classify">分类</string>
+    <string name="shoppcart">购物车</string>
+    <string name="my">我的</string>
+    <string name="abaout">为了能准确将蔬菜送到您的手里请将个人信息填写完整！</string>
+
 </resources>
