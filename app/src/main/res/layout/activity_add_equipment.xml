@@ -45,6 +45,7 @@
             android:layout_height="50dp"
             android:hint="请输入设备ID"
             android:textSize="14sp"
+            android:inputType="number"
             />
         <EditText
             android:id="@+id/equipment_pwd"
@@ -52,6 +53,7 @@
             android:layout_height="50dp"
             android:hint="请输入设备连接密码"
             android:textSize="14sp"
+            android:inputType="numberPassword"
             />
         <Button
             android:id="@+id/add_equp"

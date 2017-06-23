@@ -5,141 +5,133 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.libhttp.entity.HttpResult;
-import com.libhttp.http.HttpMethods;
-import com.libhttp.subscribers.SubscriberListener;
-import com.p2p.core.P2PSpecial.HttpErrorCode;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import utils.LogUtil;
+import utils.OkHttpUtil;
+import utils.Url;
 
 /**
  * 修改密码界面
  */
-public class ChangePassword extends Activity implements View.OnClickListener {
+public class ChangePassword extends Activity {
+    @Bind(R.id.newpwdWrapper)
+    TextInputLayout newpwdWrapper;
+    @Bind(R.id.againWrapper)
+    TextInputLayout againWrapper;
+    @Bind(R.id.changepwd_btn)
+    Button changepwdBtn;
     private Context mContext;
-    private ImageView mbackimg;
-    private TextView mtitle;
-    private String phone;   //电话号码
-
-    private EditText myoldedittext; //旧密码
-    private EditText mynewpassword; //新密码
-    private EditText myagainpassword; //确认新密码
-
-
-    private String oldPwd;
-    private String newPwd;
-    private String againPwd;
-
-    private Button mychangepwd_btn; //修改密码
-    private String VKey;    //鉴权码
-
+    private String newPwd = ""; //新密码
+    private String againPwd = ""; //再次确认
+    private String username="";//电话号码
+    private String uid="";      //userID
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
+        ButterKnife.bind(this);
         mContext = ChangePassword.this;
-        init();
-    }
 
-    private void init() {
-        mychangepwd_btn = (Button) findViewById(R.id.changepwd_btn);
-        mychangepwd_btn.setOnClickListener(this);
+        /**
+         * 获取缓存中的电话和ID
+         */
+        SharedPreferences pref=getSharedPreferences("data",MODE_PRIVATE);
+        username=pref.getString("username","");
+        uid=pref.getString("id","");
 
-        myoldedittext = (EditText) findViewById(R.id.oldpassword);
-        mynewpassword = (EditText) findViewById(R.id.newpassword);
-        myagainpassword = (EditText) findViewById(R.id.againpassword);
-
-
-        Intent intent = getIntent();
-        String title = intent.getStringExtra("title");
-        VKey = intent.getStringExtra("VKey");             //获取鉴权码
-
-        mbackimg = (ImageView) findViewById(R.id.back);
-        mbackimg.setOnClickListener(this);
-        //设置标题
-        mtitle = (TextView) findViewById(R.id.title_view);
-        mtitle.setText(title);
-    }
-
-
-    private boolean checkData() {
-        SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-        phone = sharedPreferences.getString("phone", "");  //获取电话号码
-
-        oldPwd = myoldedittext.getText().toString();
-        newPwd = mynewpassword.getText().toString();
-        againPwd = myagainpassword.getText().toString();
-        if (TextUtils.isEmpty(oldPwd)) {
-            Toast.makeText(mContext, "旧密码不能为空", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (TextUtils.isEmpty(newPwd)) {
-            Toast.makeText(mContext, "新密码不能为空", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if (TextUtils.isEmpty(againPwd)) {
-            Toast.makeText(mContext, "确认新密码不能为空", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
+        LogUtil.e("username",username);
+        LogUtil.e("uid",uid);
     }
 
     /**
-     * 点击事件
-     *
-     * @param v
+     * 修改密码
      */
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            //返回的点击事件
-            case R.id.back:
-                finish();
-                break;
-            case R.id.changepwd_btn:
-                dochangepwd();
-                break;
-            default:
-                break;
-        }
+    @OnClick(R.id.changepwd_btn)
+    public void onViewClicked() {
+     newPwd=newpwdWrapper.getEditText().getText().toString();
+     againPwd=againWrapper.getEditText().getText().toString();
+     if (TextUtils.isEmpty(newPwd)){
+         newpwdWrapper.setError("新密码不能为空");
+     }else if (TextUtils.isEmpty(againPwd)){
+         againWrapper.setError("再次确认密码不能为空");
+
+     }else if (!newPwd.equals(againPwd)){
+         againWrapper.setError("两次输入密码不一致");
+     } else {
+         newpwdWrapper.setErrorEnabled(false);
+         againWrapper.setErrorEnabled(false);
+         /**
+          * 调用找回密码的接口
+          */
+         doUpdatePwd();
+     }
+
     }
 
-
     /**
-     * 重置密码的方法
+     * 找回密码
      */
-    private void dochangepwd() {
-        if (checkData()) {
-            SubscriberListener<HttpResult> subscriberListener = new SubscriberListener<HttpResult>() {
-                @Override
-                public void onStart() {
+    private void doUpdatePwd() {
+        RequestBody body=new FormBody.Builder()
+                .add("username",username)
+                .add("uid",uid)
+                .add("password",againPwd)
+                .build();
 
+        OkHttpUtil.sendPostRequest(Url.updatePassword, body, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LogUtil.e("e",e+"");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result=response.body().string();
+                LogUtil.e("result",result);
+                JSONObject jsonObject=null;
+                try {
+                    jsonObject=new JSONObject(result);
+                    final String status=jsonObject.getString("status");
+                    final String msg=jsonObject.getString("msg");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (status.equals("1")){
+                                Toast.makeText(mContext,msg,Toast.LENGTH_SHORT).show();
+                                Intent intent=new Intent(mContext,LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }else {
+                                Toast.makeText(mContext,msg,Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+            }
+        });
 
-                @Override
-                public void onNext(HttpResult httpResult) {
-                    switch (httpResult.getError_code()) {
-                        case HttpErrorCode.ERROR_0:
-                            Toast.makeText(mContext, "修改密码成功", Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(mContext, LoginActivity.class);
-                            startActivity(intent);
-                            finish();
-                            break;
-                    }
-                }
-                @Override
-                public void onError(String error_code, Throwable throwable) {
 
-                }
-            };
-            HttpMethods.getInstance().resetPwd(phone, VKey, newPwd, againPwd, subscriberListener);
-        }
+
     }
 }

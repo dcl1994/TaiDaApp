@@ -51,7 +51,7 @@ import utils.LogUtil;
 import utils.MyApplication;
 import utils.P2PListener;
 import utils.SettingListener;
-import utils.urlUtil;
+import utils.Url;
 
 /**
  * 泰达APP主界面
@@ -108,6 +108,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
 
         init();
+
+        /**
+         * 将当前活动添加到list
+         */
+        ActivityCollector.addActivity(this);
+
+
         initUtilList(); //初始化数据
 
         /**
@@ -119,8 +126,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         ServiceAdapter adapter = new ServiceAdapter(itemUtilList);
         recyclerView.setAdapter(adapter);
-
-        againlogin();   //再次调用登录
     }
 
     /**
@@ -142,8 +147,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ItemUtil item4 = new ItemUtil("社区地图", "当前社区的地图", R.drawable.map);
         itemUtilList.add(item4);
 
+        ItemUtil item5=new ItemUtil("物业通知","获取最新物业信息",R.drawable.shequdongtai);
+        itemUtilList.add(item5);
+
+        ItemUtil item_smallknowledge=new ItemUtil("养身小知识","关注养身，关注健康",R.drawable.daydayhealth);
+        itemUtilList.add(item_smallknowledge);
+
+        ItemUtil item_cookingculture=new ItemUtil("饮食文化","饮食也是一种文化",R.drawable.eat);
+        itemUtilList.add(item_cookingculture);
 
         //itemUtilListcom的控件
+
+        ItemUtil itemprofile=new ItemUtil("社区简介","1分钟了解你的社区",R.drawable.shequtuike);
+        itemUtilListcom.add(itemprofile);
+
         ItemUtil item6 = new ItemUtil("社区动态", "了解社区最新动态", R.drawable.shequdongtai);
         itemUtilListcom.add(item6);
 
@@ -190,17 +207,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
          */
         //本地图片数据（资源文件）
         List<String> list = new ArrayList<>();
-        list.add("http://www.bhdtv.net/_data/2016/10/21/d9701245_e53a_4b64_a858_aac54b64ae8b/Thumbnail/201610210917376621121111949.jpg");
-        list.add("http://www.bhdtv.net/_data/2016/10/21/8226ad09_cd4f_474c_8c5b_e103c0eb366d/Thumbnail/201610210910438041653664119.jpg");
-        list.add("http://www.bhdtv.net/_data/2016/06/03/ff45a383_a4bf_4757_bd3e_43648c557cf0/Thumbnail/20160603152901265335782509.png");
-
+        list.add("http://39.108.82.55:8080/TendaEHome/upload/garousel/2.png");
+        list.add("http://39.108.82.55:8080/TendaEHome/upload/garousel/3.jpg");
         /**
          * 标题
          */
         List<String> titlelist = new ArrayList<>();
         titlelist.add("");
         titlelist.add("");
-        titlelist.add("");
+
         banner.setImages(list)
                 .setImageLoader(new GlideImageLoader())
                 .setDelayTime(2500)
@@ -243,27 +258,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 startActivity(inten2);
                                 mDrawerLayout.closeDrawers();
                                 break;
-                            case R.id.nav_yimi:        //一米菜园
-                                Intent intent3=new Intent(mContext,GardenActivity.class);
-                                intent3.putExtra("title","一米菜园");
-                                startActivity(intent3);
-                                mDrawerLayout.closeDrawers();
-                                break;
+//                            case R.id.nav_yimi:        //一米菜园
+//                                Intent intent3=new Intent(mContext,GardenActivity.class);
+//                                intent3.putExtra("title","一米菜园");
+//                                startActivity(intent3);
+//                                mDrawerLayout.closeDrawers();
+//                                break;
                             case R.id.nav_exit:         //退出程序
                                 /**
                                  * 销毁所有活动，并杀掉所有进程
                                  */
-                                pdialog=new SweetAlertDialog(mContext,SweetAlertDialog.WARNING_TYPE);
-                                pdialog .setTitleText("确定退出吗？")
-                                        .setContentText("退出会清除当前缓存文件,再次进入需配置监控设备")
+                                pdialog = new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE);
+                                pdialog.setTitleText("确定退出吗？")
+                                        .setContentText("退出之后再次进入需要重新登录")
                                         .setConfirmText("确定")
                                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                             @Override
                                             public void onClick(SweetAlertDialog dialog) {
                                                 cleanSharedPreference(mContext);
+
                                                 ActivityCollector.finishAll();
+
                                                 android.os.Process.killProcess(android.os.Process.myPid());
                                                 mDrawerLayout.closeDrawers();
+
+                                                /**
+                                                 * 退出程序调用disconnect
+                                                 */
+                                                //p2pconnect方法在APP一次生命周期中只需调用一次,退出后台结束时配对调用disconnect一次
+                                                P2PHandler.getInstance().p2pDisconnect();
+
                                             }
                                         })
                                         .setCancelText("取消")
@@ -290,8 +314,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.user_img:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 break;
-            case R.id.SmartCam:     //跳转到设备列表界面,在跳转之前再次登录一下
-                againlogin();
+            case R.id.SmartCam:     //跳转到监控界面
+                dologin();
                 break;
             case R.id.TV:
                 Intent intent1 = new Intent(mContext, TvLiveActivity.class);
@@ -320,7 +344,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 CommunityAdapter adapter1 = new CommunityAdapter(itemUtilListcom);
                 recyclerView.setAdapter(adapter1);
                 break;
-
         }
     }
 
@@ -328,16 +351,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     /**
      * 再次判断登录的方法
      */
-    private void againlogin() {
+    private void dologin() {
         SubscriberListener<LoginResult> subscriberListener = new SubscriberListener<LoginResult>() {
             @Override
             public void onStart() {
-                sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-                username = sharedPreferences.getString("username", "");
-                LogUtil.e("username", username);
-
-                password = sharedPreferences.getString("password", "");
-                LogUtil.e("password", password);
             }
 
             @Override
@@ -351,16 +368,31 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         //所以可以将code1与code2保存起来,只需在下次登录时刷新即可
                         int code1 = Integer.parseInt(loginResult.getP2PVerifyCode1());
                         int code2 = Integer.parseInt(loginResult.getP2PVerifyCode2());
+
                         //p2pconnect方法在APP一次生命周期中只需调用一次,退出后台结束时配对调用disconnect一次
                         boolean connect = P2PHandler.getInstance().p2pConnect(loginResult.getUserID(), code1, code2);
+
                         LogUtil.e("code1", code1 + "");
                         LogUtil.e("code2", code2 + "");
                         LogUtil.e("connect", connect + "");
+                        P2PListener p2PListener = new P2PListener();
+
                         if (connect) {
-                            P2PHandler.getInstance().p2pInit(mContext, new P2PListener(), new SettingListener());
+                           P2PHandler.getInstance().p2pInit(mContext, p2PListener, new SettingListener());
+
+                            /**
+                             * 获取用户ID存缓存，实现一次登录就不需要重复登录的效果
+                             */
+                            String LoginID=loginResult.getUserID();
+                            LogUtil.e("LoginID", LoginID);
+                            SharedPreferences.Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
+                            editor.putString("LoginID", LoginID);    //拿到用户ID存缓存
+                            editor.apply();
+
                             Intent intent = new Intent(mContext, EquipmentActivity.class);
                             intent.putExtra("title", "设备列表");
                             startActivity(intent);
+
                         } else {
                             //这里只是demo的写法,可加入自己的逻辑
                             //为false时p2p的功能不可用
@@ -374,12 +406,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         Toast.makeText(mContext, "密码错误", Toast.LENGTH_LONG).show();
                         break;
                     case HttpErrorCode.ERROR_10901025:
-//                        Toast.makeText(mContext, "参数错误", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, "参数错误", Toast.LENGTH_LONG).show();
                         break;
                     default:
                         //其它错误码需要用户自己实现
                         String msg = String.format("注册测试版(%s)", loginResult.getError_code());
-                      //  Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
                         LogUtil.e("msg",msg);
                         break;
                 }
@@ -387,11 +418,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void onError(String error_code, Throwable throwable) {
-                Toast.makeText(MyApplication.app, "onError:" + error_code, Toast.LENGTH_LONG).show();
+                Toast.makeText(MyApplication.app, "视频监控出现了未知的错误，请稍后重试" + error_code, Toast.LENGTH_LONG).show();
             }
         };
-        HttpSend.getInstance().login("86-" + username, password, subscriberListener);
+        HttpSend.getInstance().login("86-13148700419","123456",subscriberListener);
     }
+
+
 
     /**
      * 公司网址的点击方法
@@ -423,15 +456,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void exit() {
         if ((System.currentTimeMillis() - exittime) > 2000) {
+
             Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
+
             exittime = System.currentTimeMillis();
+
+            /**
+             * 关闭当前界面
+             */
+            ActivityCollector.finishAll();
+
+
+            android.os.Process.killProcess(android.os.Process.myPid());
+
             /**
              * 结束时关闭
              */
             P2PHandler.getInstance().p2pDisconnect();
-        } else {
-            finish();
-            System.exit(0);
         }
     }
 
@@ -444,10 +485,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //获取天气查询显示在headView中
         getWeather();
 
-
-        //p2pconnect方法在APP一次生命周期中只需调用一次,退出后台结束时配对调用disconnect一次
-        P2PHandler.getInstance().p2pDisconnect();
-
+//        /**
+//         * 结束时关闭
+//         */
+//        P2PHandler.getInstance().p2pDisconnect();
     }
 
     /**
@@ -457,7 +498,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Request.Builder builder = new Request.Builder();
         String cityname = "天津";
         //2.构造Request
-        Request request = builder.get().url(urlUtil.ProcessUrl + "&cityname=" + cityname).build();
+        Request request = builder.get().url(Url.ProcessUrl + "&cityname=" + cityname).build();
         //3.将Request封装为Call
         executeRequest(request);
         LogUtil.v("sms", "发送get请求");
@@ -512,42 +553,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 LogUtil.e("info", info + "");
 
                                 mweather_info.setText(info);                    //设置天气情况
-
+                                //设置天气图片，使用glide加载图片
                                 if (info.equals("晴")) {
-                                    mweather_img.setImageResource(R.drawable.sunny);
+                                    new GlideImageLoader().displayImage(mContext, R.drawable.sunny, mweather_img);
+                                }
+                                if (info.equals("雾霾")) {
+                                    new GlideImageLoader().displayImage(mContext, R.drawable.haze, mweather_img);
                                 }
                                 if (info.equals("阴")) {
-                                    mweather_img.setImageResource(R.drawable.overcast);
+                                    new GlideImageLoader().displayImage(mContext, R.drawable.overcast, mweather_img);
                                 }
                                 if (info.equals("多云")) {
-                                    mweather_img.setImageResource(R.drawable.cloudy);
+                                    new GlideImageLoader().displayImage(mContext, R.drawable.cloudy, mweather_img);
                                 }
-                                if (info.equals("雨")) {
-                                    mweather_img.setImageResource(R.drawable.rain);
+                                if (info.equals("雨") || info.equals("小雨") || info.equals("中雨") || info.equals("大雨") || info.equals("阵雨")) {
+                                    new GlideImageLoader().displayImage(mContext, R.drawable.rain, mweather_img);
                                 }
-                                if (info.equals("小雨")) {
-                                    mweather_img.setImageResource(R.drawable.rain);
+                                if (info.equals("雪") || info.equals("小雪") || info.equals("中雪") || info.equals("大雪")) {
+                                    new GlideImageLoader().displayImage(mContext, R.drawable.snow, mweather_img);
                                 }
-                                if (info.equals("中雨")) {
-                                    mweather_img.setImageResource(R.drawable.rain);
+                                if (info.equals("扬沙")) {
+                                    mweather_img.setImageResource(R.drawable.blowingsand);
+                                    new GlideImageLoader().displayImage(mContext, R.drawable.overcast, mweather_img);
                                 }
-                                if (info.equals("大雨")) {
-                                    mweather_img.setImageResource(R.drawable.rain);
-                                }
-                                if (info.equals("阵雨")) {
-                                    mweather_img.setImageResource(R.drawable.rain);
-                                }
-                                if (info.equals("雪")) {
-                                    mweather_img.setImageResource(R.drawable.snow);
-                                }
-                                if (info.equals("小雪")) {
-                                    mweather_img.setImageResource(R.drawable.snow);
-                                }
-                                if (info.equals("中雪")) {
-                                    mweather_img.setImageResource(R.drawable.snow);
-                                }
-                                if (info.equals("大雪")) {
-                                    mweather_img.setImageResource(R.drawable.snow);
+                                if (info.equals("沙尘暴")) {
+                                    mweather_img.setImageResource(R.drawable.sandstorm);
+                                    new GlideImageLoader().displayImage(mContext, R.drawable.overcast, mweather_img);
                                 }
                             } else {
                                 Toast.makeText(MainActivity.this, "获取天气数据失败,请稍后尝试", Toast.LENGTH_SHORT).show();
@@ -590,5 +621,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-
+    /**
+     * 活动结束的时候调用
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ActivityCollector.removeActivity(this);
+    }
 }

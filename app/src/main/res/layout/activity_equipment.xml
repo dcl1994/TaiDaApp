@@ -38,12 +38,6 @@
                 android:background="@drawable/addequipment_bg" />
         </LinearLayout>
     </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/rel">
-
         <TextView
             android:id="@+id/hint_view"
             android:layout_width="wrap_content"
@@ -54,10 +48,8 @@
             android:visibility="gone"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/hint_view">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/rel">
         </android.support.v7.widget.RecyclerView>
-
-    </RelativeLayout>
 </RelativeLayout>

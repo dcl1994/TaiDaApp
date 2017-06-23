@@ -8,8 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.siyann.taidaapp.ColorfulActivity;
+import com.siyann.taidaapp.CommunityNews;
+import com.siyann.taidaapp.CommunityProFileActivity;
+import com.siyann.taidaapp.CommunityTwitterActivity;
 import com.siyann.taidaapp.DetailsActivity;
+import com.siyann.taidaapp.FeedbackActivity;
 import com.siyann.taidaapp.R;
+import com.siyann.taidaapp.SurveyActivity;
 
 import java.util.List;
 
@@ -59,36 +65,36 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
                 int position = holder.getAdapterPosition();
                 switch (position) {
                     case 0:
-                        Intent intent=new Intent(view.getContext(), DetailsActivity.class);
-                        intent.putExtra("url","http://www.tiptimes.com/home_td/index.php/Home/Index/list_qu.html");
+                        Intent intentprofile=new Intent(view.getContext(), CommunityProFileActivity.class);
+                        intentprofile.putExtra("title","社区简介");
+                        view.getContext().startActivity(intentprofile);
+                        break;
+                    case 1:
+                        Intent intent=new Intent(view.getContext(), CommunityNews.class);
                         intent.putExtra("title","社区动态");
                         view.getContext().startActivity(intent);
                         break;
-                    case 1:
-                        Intent intent1=new Intent(view.getContext(), DetailsActivity.class);
-                        intent1.putExtra("url","http://www.tiptimes.com/home_td/index.php/Home/Index/twker.html");
+                    case 2:
+                        Intent intent1=new Intent(view.getContext(), CommunityTwitterActivity.class);
                         intent1.putExtra("title","社区推客");
                         view.getContext().startActivity(intent1);
                         break;
-                    case 2:
-                        Intent intent2=new Intent(view.getContext(), DetailsActivity.class);
-                        intent2.putExtra("url", "http://www.tiptimes.com/home_td/index.php/Home/Index/questionnaire.html");
+                    case 3:
+                        Intent intent2=new Intent(view.getContext(), SurveyActivity.class);
                         intent2.putExtra("title","问卷调查");
                         view.getContext().startActivity(intent2);
                         break;
-                    case 3:
-                        Intent intent3=new Intent(view.getContext(), DetailsActivity.class);
-                        intent3.putExtra("url", "http://www.tiptimes.com/home_td/index.php/Home/Index/feedback.html");
+                    case 4:
+                        Intent intent3=new Intent(view.getContext(), FeedbackActivity.class);
                         intent3.putExtra("title","居民反馈");
                         view.getContext().startActivity(intent3);
                         break;
-                    case 4:
-                        Intent intent4=new Intent(view.getContext(), DetailsActivity.class);
-                        intent4.putExtra("url", "http://www.tiptimes.com/home_td/index.php/Home/Index/list_x.html?type=2");
+                    case 5:
+                        Intent intent4=new Intent(view.getContext(), ColorfulActivity.class);
                         intent4.putExtra("title","缤纷活动");
                         view.getContext().startActivity(intent4);
                         break;
-                    case 5:
+                    case 6:
                         Intent intent5=new Intent(view.getContext(), DetailsActivity.class);
                         intent5.putExtra("url", "http://www.tiptimes.com/home_td/index.php/Home/Index/personal.html");
                         intent5.putExtra("title","个人中心");

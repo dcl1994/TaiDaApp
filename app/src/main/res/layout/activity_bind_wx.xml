@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="10dp"
+        android:layout_margin="20dp"
+        android:background="@drawable/topic_tag_bg">
+        <LinearLayout
+            android:id="@+id/lineart2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/lineart">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:text="@string/text_wx"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/lineart3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/lineart2">
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/phone"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"/>
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/phoneWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:id="@+id/againpassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="请输入手机号"
+                    android:textSize="14sp"
+                    android:inputType="textPassword" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lineart3"
+            android:layout_margin="5dp">
+            <Button
+                android:id="@+id/bind_btn"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/bindwx_bg"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:text="@string/bind_wx"
+                android:layout_marginRight="5dp"/>
+
+            <Button
+                android:id="@+id/cancel_btn"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_bg"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:text="@string/cancel"/>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

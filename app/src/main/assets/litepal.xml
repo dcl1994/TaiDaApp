@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+
+    <dbname value="equipment"></dbname>       <!--数据库名称-->
+
+    <version value="1"></version>
+    <list>
+        <!--声明我们要配置的映射模型类
+        创建表-->
+        <mapping class="widget.Equipment"></mapping>
+    </list>
+</litepal>

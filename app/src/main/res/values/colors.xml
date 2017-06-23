@@ -34,4 +34,5 @@
     <color name="style_red">#ff4c41</color>
     <color name="style_divider_color">#C9C7CD</color>
     <color name="linecolor">#e2e2e2</color>
+    <color name="my_gray">#cdcdcd</color>
 </resources>

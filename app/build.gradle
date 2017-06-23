@@ -4,16 +4,26 @@ android {
     compileSdkVersion 24
     buildToolsVersion '24.0.2'
 
+
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'x86_64', 'armeabi-v7a', 'armeabi'
+            universalApk false
+        }
+    }
+
     defaultConfig {
         applicationId "com.siyann.taidaapp"
         minSdkVersion 17
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -21,94 +31,128 @@ android {
         }
     }
 
+
+    sourceSets {//目录指向配置
+        main {
+            jniLibs.srcDir(['jniLibs'])
+        }
+    }
+
+
+
     lintOptions {
         abortOnError false
     }
     productFlavors {
     }
+}
 
-    //ToggleButton
-    repositories {
-        mavenCentral()
-        jcenter()
-    }
+
+/**
+ * 这里比较重要，必须加上这个
+ * ToggleButton，仿苹果单选按钮
+ */
+repositories {
+    flatDir {        dirs 'libs'    }
+    mavenCentral()
+    jcenter()
 }
 
 dependencies {
 
     /**
-     * 卡片布局
+     *    卡片布局
      */
     compile 'com.android.support:cardview-v7:24.2.1'
-
     compile fileTree(dir: 'libs', include: ['*.jar'])
     /**
-     *  智能联机的依赖
+     *     智能联机的依赖
      */
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
-
     /**
-     * Sweet Alert Dialog甜心弹框
+     *    Sweet Alert Dialog甜心弹框
      */
-
     compile 'cn.pedant.sweetalert:library:1.3'
-
     /**
-     *  ToggleButton仿ios切换按钮
+     *     ToggleButton仿ios切换按钮
      */
     compile 'com.github.zcweng:switch-button:0.0.2@aar'
     /**
-     *       okhttp联网请求
+     *          okhttp联网请求
      */
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
     /**
-     *       gson解析
+     *          gson解析
      */
     compile 'com.google.code.gson:gson:2.7'
     /**
-     *       Navigation定制布局，导入依赖
+     *          Navigation定制布局，导入依赖
      */
     compile 'com.android.support:design:24.2.1'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     /**
-     *       添加RecyclerView依赖
+     *          添加RecyclerView依赖
      */
     compile 'com.android.support:recyclerview-v7:24.2.1'
     /**
-     *       图片轮播依赖
+     *          图片轮播依赖
      */
     compile 'com.youth.banner:banner:1.4.9'
     //最新版本
+
     /**
-     *       Glide加载图片
+     *          Glide加载图片
      */
     compile 'com.github.bumptech.glide:glide:3.5.2'
     /**
-     *      视频接入的依赖
+     *         视频接入的依赖
      */
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
     compile 'com.p2p.core:p2p-core:0.3.7'
     compile 'me.drakeet.multitype:multitype:2.2.2'
     compile 'com.hwangjr.rxbus:rxbus:1.0.5'
     compile 'com.trello:rxlifecycle:0.3.0'
     compile 'com.trello:rxlifecycle-components:0.3.0'
     /**
-     *       微信登录所需的依赖
+     *          微信登录所需的依赖
      */
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:1.1.6'
     compile files('libs/volley.jar')
     /**
-     *       高德地图
+     *          高德地图
      */
     compile files('libs/AMap2DMap_4.2.0_AMapSearch_4.0.0_20170120.jar')
     compile files('libs/AMap_Location_V3.3.0_20170118.jar')
     compile files('libs/jackson-all-1.9.11.jar')
+    compile files('libs/MobCommons-2016.0714.1402.jar')
+    compile files('libs/MobTools-2016.0714.1402.jar')
+    /**
+     *  添加mob的依赖
+     */
+    compile files('libs/MobCommons-2016.0714.1402.jar')
+    compile files('libs/MobTools-2016.0714.1402.jar')
+    compile(name: 'SMSSDK-2.1.1', ext: 'aar')
+    compile(name: 'SMSSDKGUI-2.1.1', ext: 'aar')
+    /**
+     *   添加ButterKnife的依赖
+     */
+    compile 'com.jakewharton:butterknife:7.0.0'
+    /**
+     * QQ浏览器内核的依赖
+     */
+
+    /**
+     * 摄像头连接的依赖
+     */
+    compile project(':vitamio')
+
+    /**
+     *  配置litePar开源库
+     */
+    compile 'org.litepal.android:core:1.3.2'
 }
 
 

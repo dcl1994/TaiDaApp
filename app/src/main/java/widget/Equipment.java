@@ -1,28 +1,38 @@
 package widget;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * 设备实体类
  */
-public class Equipment {
-    private String name;    //设备昵称
-    private String equipmentId ;    //设备ID
-    private String pwd;     //设备连接密码
+public class Equipment  extends DataSupport {
+    private String nickname;    //设备昵称
+    private int equipid;        //设备ID
+    private String password;    //设备密码
+    private String imagepath;   //图片截图地址
 
+    public Equipment(){}
 
-    public Equipment(String name,String equipmentId,String pwd){
-        this.name=name;
-        this.equipmentId=equipmentId;
-        this.pwd=pwd;
-    }
-    public String getName() {
-        return name;
-    }
-
-    public String getPwd() {
-        return pwd;
+    public Equipment(String nickname,int equipid,String password,String imagepath){
+        this.nickname=nickname;
+        this.equipid=equipid;
+        this.password=password;
+        this.imagepath=imagepath;
     }
 
-    public String getEquipmentId() {
-        return equipmentId;
+    public String getNickname() {
+        return nickname;
+    }
+
+    public int getEquipid() {
+        return equipid;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getImagepath() {
+        return imagepath;
     }
 }

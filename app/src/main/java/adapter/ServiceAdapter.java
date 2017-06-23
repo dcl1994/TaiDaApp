@@ -9,11 +9,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.siyann.taidaapp.ConveniencePhoneActivity;
-import com.siyann.taidaapp.DetailsActivity;
+import com.siyann.taidaapp.CookingCultureActivity;
 import com.siyann.taidaapp.ExpressCheckActivity;
 import com.siyann.taidaapp.MapActivity;
+import com.siyann.taidaapp.PropertyNoticeActivity;
 import com.siyann.taidaapp.R;
-import com.siyann.taidaapp.TrafficQueryActivity;
+import com.siyann.taidaapp.RoadLookActivity;
+import com.siyann.taidaapp.SmallKnowledgeActivity;
 
 import java.util.List;
 
@@ -77,15 +79,15 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
                 int position=holder.getAdapterPosition();
                 switch (position){
                     case 0:
-                        Intent intent=new Intent(view.getContext(), TrafficQueryActivity.class);
+                        Intent intent=new Intent(view.getContext(), RoadLookActivity.class);
                         intent.putExtra("title","路况查看");
                         view.getContext().startActivity(intent);
                         break;
                     case 1:
-                        Intent intent1=new Intent(view.getContext(), DetailsActivity.class);
-                        intent1.putExtra("url","http://www.tiptimes.com/tdtv/index.php/Home/Index/login.html");
-                        intent1.putExtra("title","家居报修");
-                        view.getContext().startActivity(intent1);
+//                        Intent intent1=new Intent(view.getContext(), DetailsActivity.class);
+//                        intent1.putExtra("url","http://www.tiptimes.com/tdtv/index.php/Home/Index/login.html");
+//                        intent1.putExtra("title","家居报修");
+//                        view.getContext().startActivity(intent1);
                         break;
                     case 2:
                         Intent intent2=new Intent(view.getContext(), ExpressCheckActivity.class);
@@ -100,8 +102,26 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ViewHold
                         break;
                     case 4:
                         Intent intent4=new Intent(view.getContext(), MapActivity.class);
-                        intent4.putExtra("title","社区地图");
+                        intent4.putExtra("title", "社区地图");
                         view.getContext().startActivity(intent4);
+                        break;
+                    case 5:
+                        Intent intent5=new Intent(view.getContext(), PropertyNoticeActivity.class);
+                        intent5.putExtra("title","物业通知");
+                        view.getContext().startActivity(intent5);
+                        break;
+                    case 6:
+                        Intent intent6=new Intent(view.getContext(),SmallKnowledgeActivity.class);
+                        intent6.putExtra("title","养身小知识");
+                        view.getContext().startActivity(intent6);
+                        break;
+
+                    case 7:
+                        Intent intent7=new Intent(view.getContext(), CookingCultureActivity.class);
+                        intent7.putExtra("title","饮食文化");
+                        view.getContext().startActivity(intent7);
+                        break;
+                    default:
                         break;
                 }
             }

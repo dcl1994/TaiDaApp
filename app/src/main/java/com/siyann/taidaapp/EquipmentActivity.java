@@ -45,6 +45,8 @@ public class EquipmentActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private EquipmentAdapter adapter;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,11 +67,10 @@ public class EquipmentActivity extends AppCompatActivity {
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(mContext,MainActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
+
         /**
          * 显示toolbar
          */
@@ -120,6 +121,8 @@ public class EquipmentActivity extends AppCompatActivity {
             }
         });
 
+
+
         SharedPreferences pref=getSharedPreferences("data", MODE_PRIVATE);
         equipmentname=pref.getString("equipmentname", equipmentname);
         equipmentid=pref.getString("equipmentid", equipmentid);
@@ -145,11 +148,33 @@ public class EquipmentActivity extends AppCompatActivity {
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode==KeyEvent.KEYCODE_BACK){
-            Intent intent=new Intent(mContext,MainActivity.class);
-            startActivity(intent);
+        if (keyCode==KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0){
             finish();
         }
         return true;
+    }
+
+
+    /**
+     * 一进来就查询数据库
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        List<Equipment> equipments = DataSupport.findAll(Equipment.class);
+
+        equipmentList = equipments;
+
+
+        adapter = new EquipmentAdapter(mContext, equipmentList);
+        /**
+         * 如果没有设备，显示没有设备页面
+         */
+        if (equipmentList == null || equipmentList.size() == 0) {
+            lineequipmentList.setVisibility(View.VISIBLE);
+        } else {
+            recyclerEquipment.setAdapter(adapter);
+            lineequipmentList.setVisibility(View.GONE);
+        }
     }
 }

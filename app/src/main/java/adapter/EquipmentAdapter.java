@@ -1,7 +1,9 @@
 package adapter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.siyann.taidaapp.MonitoerActivity;
 import com.siyann.taidaapp.NicknameActivity;
 import com.siyann.taidaapp.R;
@@ -16,6 +19,7 @@ import com.siyann.taidaapp.SettingActivity;
 
 import java.util.List;
 
+import utils.LogUtil;
 import widget.Equipment;
 
 /**
@@ -23,9 +27,10 @@ import widget.Equipment;
  */
 public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.ViewHolder> {
 
-    private boolean ischecked=false;    //静音的开关键
-
     private List<Equipment> mEquipmentList;
+
+    private Context mContext;
+
 
     static class ViewHolder extends RecyclerView.ViewHolder{
         View equipmentView;
@@ -47,13 +52,20 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.View
         }
     }
 
-    public EquipmentAdapter(List<Equipment> equipmentList){
+
+    /**
+     *构造器
+     * @param mContext
+     * @param equipmentList
+     */
+    public EquipmentAdapter(Context mContext,List<Equipment> equipmentList){
+        this.mContext=mContext;
         mEquipmentList=equipmentList;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.equipment_item,parent,false);
+        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.equipment_item,parent,false);
         final ViewHolder holder=new ViewHolder(view);
 
         /**
@@ -62,20 +74,15 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.View
         holder.equipmentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position = holder.getAdapterPosition();
-                switch (position){
-                    case 0:
-                        Intent intent=new Intent(v.getContext(), MonitoerActivity.class);
-                        if (ischecked){
-                            intent.putExtra("ischecked","布防");
-                        }else{
-                            intent.putExtra("ischecked","撤防");
-                          }
-                        v.getContext().startActivity(intent);
-                        break;
-                    default:
-                        break;
-                }
+                int position=holder.getAdapterPosition();
+                Equipment equipment=mEquipmentList.get(position);
+                Intent intent=new Intent(mContext, MonitoerActivity.class);
+                intent.putExtra("id",""+equipment.getEquipid());
+                intent.putExtra("pwd",equipment.getPassword());
+                intent.putExtra("nickname",equipment.getNickname());
+                LogUtil.e("itemid", equipment.getEquipid() + "");
+                LogUtil.e("itempwd", equipment.getPassword());
+                mContext.startActivity(intent);
             }
         });
 
@@ -85,7 +92,7 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.View
         holder.video.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(),"视频",Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext,"视频",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -95,9 +102,15 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.View
         holder.nickname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               Intent intent=new Intent(v.getContext(), NicknameActivity.class);
-               intent.putExtra("title","修改昵称");
-               v.getContext().startActivity(intent);
+                int position=holder.getAdapterPosition();
+                Equipment equipment=mEquipmentList.get(position);
+                Intent intent=new Intent(mContext, NicknameActivity.class);
+                intent.putExtra("equipid",equipment.getEquipid());
+                intent.putExtra("title","修改设备名称");
+
+                LogUtil.e("equipid", equipment.getEquipid() + "");
+
+                mContext.startActivity(intent);
             }
         });
 
@@ -107,7 +120,7 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.View
         holder.setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(v.getContext(), SettingActivity.class);
+                Intent intent=new Intent(mContext, SettingActivity.class);
                 intent.putExtra("title","设置");
                 v.getContext().startActivity(intent);
             }
@@ -117,8 +130,25 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Equipment equipment=mEquipmentList.get(position);
-        holder.equipmentName.setText(equipment.getName());
+        final Equipment equipment=mEquipmentList.get(position);
+
+        /**
+         * 如果图片地址不为空就加载出来
+         */
+        LogUtil.e("imagepath", "" + equipment.getImagepath());
+//
+//        Glide基本可以load任何可以拿到的媒体资源，如：
+//        load SD卡资源：load("file://" + Environment.getExternalStorageDirectory().getPath() + "/test.jpg");
+
+        if (!TextUtils.isEmpty(equipment.getImagepath())){
+            Glide.with(mContext)
+                    .load("file://"+equipment.getImagepath())
+                    .asBitmap()
+                    .placeholder(R.drawable.plugin_nopicture)
+                    .into(holder.equipmentImage);
+        }
+
+        holder.equipmentName.setText(equipment.getNickname());
     }
 
     @Override

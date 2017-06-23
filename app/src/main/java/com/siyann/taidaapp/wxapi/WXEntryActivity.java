@@ -4,14 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.libhttp.entity.HttpResult;
 import com.libhttp.subscribers.SubscriberListener;
-import com.p2p.core.P2PSpecial.HttpErrorCode;
-import com.p2p.core.P2PSpecial.HttpSend;
-import com.p2p.core.P2PSpecial.WebConfig;
-import com.siyann.taidaapp.BoundWeixinActivity;
 import com.siyann.taidaapp.MainActivity;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
@@ -24,35 +19,49 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import utils.LogUtil;
 import utils.MyApplication;
+import utils.OkHttpUtil;
+import utils.Url;
 
 /**
  * 微信登录页面
  * Created by szjdj on 2017-04-01.
  */
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
-//    private static final String APP_SECRET = "9243891dc07af1dc860cd0b3d4b47b36";
+//    private static final String APP_SECRET = "aaa2d5131933a049c032e96f2f76e2a6";
+    /**
+     * 公众号的
+     */
     private static final String APP_SECRET = "35b0f28236bdcc1b78cd8e0249b8db01";
 
     private IWXAPI mWeixinAPI;
 //    public static final String WEIXIN_APP_ID = "wxeb75e53c13238e4e";
+
+    /**
+     * 公众号的
+     */
     public static final String WEIXIN_APP_ID = "wx4a7556c9cfb27cc9";
 
     private String username="";    //用户名
     private String password="";    //密码
     private String unionid="";  //unionid
+    private String nickname=""; //昵称
+    private String open_id="";  //微信唯一ID
+    private String headimgurl="";     //用户头像地址
 
+    private String msg="";      //绑定微信的信息
 
     private SubscriberListener<HttpResult>  subscriberListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +74,13 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         SharedPreferences pref=getSharedPreferences("data",MODE_PRIVATE);
         username=pref.getString("username","");
         password=pref.getString("password","");
+
+
+        SharedPreferences preferences=getSharedPreferences("msg",MODE_PRIVATE);
+        msg=preferences.getString("msg","");
+        LogUtil.e("msg",msg);
+
+
 
     }
     @Override
@@ -230,11 +246,11 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                         JSONObject jsonObject = null;
                         try {
                             jsonObject = new JSONObject(res);
-                            String nickname = jsonObject.getString("nickname");
+                            nickname = jsonObject.getString("nickname");
 
                             int sex = Integer.parseInt(jsonObject.get("sex").toString());
 
-                            String headimgurl = jsonObject.getString("headimgurl");
+                            headimgurl = jsonObject.getString("headimgurl");
 
                             unionid = jsonObject.getString("unionid");
 
@@ -252,11 +268,23 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
                             editor.putString("headimgurl", headimgurl);
                             editor.apply();
 
+//                            /**
+//                             * 跳转到绑定微信界面
+//                             * 用户可以选择绑定或者不绑定
+//                             */
+//                                if (TextUtils.isEmpty(msg)){
+//                                    Intent intent=new Intent(MyApplication.getContext(),BindWxActivity.class);
+//                                    intent.putExtra("unionid",unionid);
+//                                    startActivity(intent);
+//                                }else {
+//                                    Intent intent=new Intent(MyApplication.getContext(),MainActivity.class);
+//                                    startActivity(intent);
+//                                    finish();
+//
+//                                }
+                            dologin();
 
 
-                            Intent intent=new Intent(MyApplication.getContext(),MainActivity.class);
-                            startActivity(intent);
-//                            wxlogin();  //yoosee微信登录的监听
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -269,55 +297,40 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     }
 
     /**
-     * yoosee微信登录
+     * 登录
      */
-    private void wxlogin() {
-        /**
-         * yoosee的微信登录接口
-         */
-        subscriberListener=new SubscriberListener<HttpResult>() {
+    private void dologin() {
+        RequestBody body=new FormBody.Builder()
+                .add("nickname", nickname)
+                .add("open_id",unionid)
+                .add("head",headimgurl)
+                .build();
+        LogUtil.e("nickname",nickname);
+        LogUtil.e("open_id",unionid);
+        LogUtil.e("head",headimgurl);
+        OkHttpUtil.sendPostRequest(Url.login, body, new Callback() {
             @Override
-            public void onStart() {
-
+            public void onFailure(Call call, IOException e) {
+                LogUtil.e("e",e+"");
             }
+
             @Override
-            public void onNext(HttpResult httpResult) {
-                switch (httpResult.getError_code()){
-                    case HttpErrorCode.ERROR_0:
-                        Intent intent=new Intent(MyApplication.getContext(),MainActivity.class);
+            public void onResponse(Call call, Response response) throws IOException {
+                String result=response.body().string();
+                LogUtil.e("result",result);
+                JSONObject jsonObject=null;
+                try {
+                    jsonObject=new JSONObject(result);
+                    final String status=jsonObject.getString("status");
+                    if (status.equals("1")){
+                        Intent intent=new Intent(MyApplication.getContext(), MainActivity.class);
                         startActivity(intent);
-                        break;
-                    case HttpErrorCode.ERROR_10901020:
-                        Toast.makeText(MyApplication.getContext(),"缺少输入参数",Toast.LENGTH_SHORT).show();
-                        break;
-                    case HttpErrorCode.ERROR_10902002:
-                        Intent intent1=new Intent(MyApplication.getContext(), BoundWeixinActivity.class);
-                        intent1.putExtra("unionid",unionid);
-                        startActivity(intent1);
-                        break;
-                    case HttpErrorCode.ERROR_10902001:
-                        Toast.makeText(MyApplication.getContext(),"缺少输入参数",Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                    //其它错误码需要用户自己实现
-                    String msg = String.format("注册测试版(%s)", httpResult.getError_code());
-                    Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
-                    break;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-            @Override
-            public void onError(String error_code, Throwable throwable) {
-
-            }
-        };
-        String ThirdType= WebConfig.PlatFormType.ThirdLogin_PlatFormType_WeiXin;
-        try {
-            HttpSend.getInstance().ThirdLogin("1",unionid,username,password,"",ThirdType,subscriberListener);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        });
     }
 }
 

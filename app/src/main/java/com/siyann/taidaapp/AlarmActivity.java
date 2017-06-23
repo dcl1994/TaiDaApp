@@ -108,9 +108,6 @@ public class AlarmActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.alarm_email:
                 Toast.makeText(mcontext,"邮箱绑定被点击了",Toast.LENGTH_SHORT).show();
-
-
-
                 break;
             default:
                 break;

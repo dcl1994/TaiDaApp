@@ -24,6 +24,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.annotation.Tag;
 import com.p2p.core.BaseMonitorActivity;
 import com.p2p.core.P2PHandler;
 import com.p2p.core.P2PValue;
@@ -31,7 +33,9 @@ import com.p2p.core.P2PView;
 
 import java.io.File;
 
+import entity.AlarmInfo;
 import utils.LogUtil;
+import utils.RxBUSAction;
 
 /**
  * 监控的界面,登录成功后才可以进入
@@ -109,9 +113,9 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
 
     private ImageView close_voice;      //静音键
 
-
     private  String ischecked;      //获取设备列表传递过来的布防状态
 
+    private AlarmInfo info;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,7 +127,6 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         getScreenWithHeigh();
         regFilter();
 
-
         CallOnClick();  //连接设备
 
         Intent intent=getIntent();
@@ -132,6 +135,15 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
 
     }
 
+    @Subscribe(
+            tags = {
+                    @Tag(RxBUSAction.EVENT_ALARM)
+            }
+    )
+    public void initUI(AlarmInfo info) {
+        this.info = info;
+        LogUtil.e("info",info+"");
+    }
 
     /**
      * 过一段时间再进来的时候会自动挂断视频连接
@@ -202,6 +214,9 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         fullscreenimg.setOnClickListener(this);
 
         rlP2pview = (RelativeLayout) findViewById(R.id.r_p2pview);  //p2pview的父控件
+
+
+
         /**
          * 从缓存中取出设备的昵称，ID，密码
          */
@@ -212,11 +227,13 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
 
         equipmentpwd = sharedPreferences.getString("equipmentpwd", "");
 
+
         mImageView = (ImageView) findViewById(R.id.back);
 
         mImageView.setOnClickListener(this);
 
         btnTalk = (ImageView) findViewById(R.id.iv_speak);
+
         /**
          * 静音
          */
@@ -375,7 +392,6 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         LogUtil.e("LoginID", LoginID);
         equipmentid = sharedPreferences.getString("equipmentid", "");
         LogUtil.e("equipmentid", equipmentid);
-
         String pwd = P2PHandler.getInstance().EntryPassword(equipmentpwd);//经过转换后的设备密码
         P2PHandler.getInstance().call(LoginID, pwd, true, 1, equipmentid, "", "", 2, equipmentid);
     }

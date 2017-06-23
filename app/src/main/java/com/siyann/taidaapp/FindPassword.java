@@ -5,280 +5,234 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.libhttp.entity.HttpResult;
-import com.libhttp.subscribers.SubscriberListener;
-import com.p2p.core.P2PSpecial.HttpErrorCode;
-import com.p2p.core.P2PSpecial.HttpSend;
-
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import cn.smssdk.EventHandler;
+import cn.smssdk.SMSSDK;
 import utils.LogUtil;
 import utils.MyApplication;
-import widget.GetAccountByPhoneNOResult;
 
 /**
  * 找回密码界面
  */
-public class FindPassword extends Activity implements View.OnClickListener {
+public class FindPassword extends Activity {
+    String uid;
+    @Bind(R.id.usernameWrapper)
+    TextInputLayout usernameWrapper;
+    @Bind(R.id.VerfcodeWrapper)
+    TextInputLayout VerfcodeWrapper;
+    @Bind(R.id.getcode)
+    Button getcode;
+    @Bind(R.id.findpwd_btn)
+    Button findpwdBtn;
 
-    private TextView mtitletext;
-    private ImageView mImageView;
     private Context mContext;
-    private String title = "";
-    private Button findpwd_btn;
-    private Button getcode;
 
-    private EditText edt_phone; //电话号码
-    private EditText edt_code;  //验证码
+    private int i = 30; //30秒后重新发送
+    private String phone = "";
+    private String code = ""; //验证码
 
-
-    private String phone;  //电话号码
-    private String code;    //验证码
-
-    SubscriberListener<HttpResult> subscriberListener;  //回调的监听
-//    String VKey="d6a0d7a8b38f1371333c88c0377959606541459596276804345";    //鉴权码
-    String VKey;
-    String ID;      //ID
-
-    private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_password);
+        ButterKnife.bind(this);
         mContext = FindPassword.this;
         init();
     }
 
     private void init() {
         /**
-         * 从缓存中取出设备的昵称，ID，密码
+         * 从缓存中取出用户ID，UID
          */
-        sharedPreferences=getSharedPreferences("data", MODE_PRIVATE);
-        ID=sharedPreferences.getString("LoginID", "");
-        LogUtil.e("ID",ID);
+        SharedPreferences  sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        uid = sharedPreferences.getString("id", "");
+        LogUtil.e("uid", uid);
 
-        Intent intent = getIntent();
-        title = intent.getStringExtra("title");
-
-        mtitletext = (TextView) findViewById(R.id.title_view);
-        mImageView = (ImageView) findViewById(R.id.back);
-        mImageView.setOnClickListener(this);
-        mtitletext.setText(title);
-
-        getcode = (Button) findViewById(R.id.getcode);
-        getcode.setOnClickListener(this);
-
-        findpwd_btn = (Button) findViewById(R.id.findpwd_btn);
-        findpwd_btn.setOnClickListener(this);
-
-        edt_phone = (EditText) findViewById(R.id.phone);     //电话号码
-        edt_code = (EditText) findViewById(R.id.verificationcode);   //验证码
+        //启动短信验证SDK
+        SMSSDK.initSDK(this, MyApplication.MobAPPID, MyApplication.MobSecret);
+        EventHandler eventHandler = new EventHandler() {
+            @Override
+            public void afterEvent(int event, int result, Object data) {
+                Message msg = new Message();
+                msg.arg1 = event;
+                msg.arg2 = result;
+                msg.obj = data;
+                handler.sendMessage(msg);
+            }
+        };
+        //注册回调监听接口
+        SMSSDK.registerEventHandler(eventHandler);
 
     }
 
     /**
-     * 点击事件
+     * 接收初始化传递过来的值
      */
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.back:
-                finish();
-                break;
-            case R.id.getcode:  //获取验证码
-                phone = edt_phone.getText().toString();
-                if (TextUtils.isEmpty(phone)) {
-                    Toast.makeText(mContext, "电话号码不能为空", Toast.LENGTH_SHORT).show();
-                }
-//                    subscriberListener = new SubscriberListener<HttpResult>() {
-//                        @Override
-//                        public void onStart() {
-//
-//                        }
-//                        @Override
-//                        public void onNext(HttpResult httpResult) {
-//                            switch (httpResult.getError_code()) {
-//                                case HttpErrorCode.ERROR_0:
-//                                    //注册成功
-//                                    Toast.makeText(mContext, "验证码发送成功", Toast.LENGTH_LONG).show();
-//                                    break;
-//                                case HttpErrorCode.ERROR_10901050:
-//                                    Toast.makeText(mContext, "APP信息不正确", Toast.LENGTH_LONG).show();
-//                                    break;
-//                                case HttpErrorCode.ERROR_10902025:
-//                                    Toast.makeText(mContext, "获取手机验证码太频繁", Toast.LENGTH_LONG).show();
-//                                    break;
-//                                case HttpErrorCode.ERROR_10902026:
-//                                    Toast.makeText(mContext, "获取手机验证码已到达上限", Toast.LENGTH_LONG).show();
-//                                    break;
-//                                default:
-//                                    //其它错误码需要用户自己实现
-//                                    String msg = String.format("注册测试版(%s)", httpResult.getError_code());
-//                                    Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
-//                                    break;
-//                            }
-//                        }
-//                        @Override
-//                        public void onError(String error_code, Throwable throwable) {
-//
-//                        }
-//                    };
-//                    HttpSend.getInstance().getAccountByPhoneNO("86", phone, subscriberListener);
-
-
-                //获取验证码的监听事件
-                SubscriberListener<GetAccountByPhoneNOResult> subscriberListener2=new SubscriberListener<GetAccountByPhoneNOResult>() {
-                    @Override
-                    public void onStart() {
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            phone = usernameWrapper.getEditText().getText().toString();  //拿到电话号码
+            if (msg.what == -9) {
+                getcode.setText("重新发送(" + i + ")");
+            } else if (msg.what == -8) {
+                getcode.setText("获取验证码");
+                getcode.setClickable(true);
+                i = 30;
+            } else {
+                int event = msg.arg1;
+                int result = msg.arg2;
+                Object data = msg.obj;
+                LogUtil.e("event", "event=" + event);
+                if (result == SMSSDK.RESULT_COMPLETE) {
+                    //短信注册成功后，返回
+                    if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
+                        /**
+                         * 提交验证码成功
+                         * 获取token传递给changepwd界面
+                         */
+                        Intent intent = new Intent(mContext, ChangePassword.class);
+                        startActivity(intent);
+                        finish();
+                    } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
+                        Toast.makeText(getApplicationContext(), "验证码已发送", Toast.LENGTH_SHORT).show();
                     }
-                    @Override
-                    public void onNext(GetAccountByPhoneNOResult getAccountByPhoneNOResult) {
-                     switch(getAccountByPhoneNOResult.getError_code()){
-                         case HttpErrorCode.ERROR_0:
-                             Toast.makeText(mContext, "验证码发送成功", Toast.LENGTH_LONG).show();
-                             VKey=getAccountByPhoneNOResult.getVKey();
-                             LogUtil.e("VKey",VKey);
-                            break;
-                         case HttpErrorCode.ERROR_10901050:
-                                    Toast.makeText(mContext, "APP信息不正确", Toast.LENGTH_LONG).show();
-                                    break;
-                                case HttpErrorCode.ERROR_10902025:
-                                    Toast.makeText(mContext, "获取手机验证码太频繁", Toast.LENGTH_LONG).show();
-                                    break;
-                                case HttpErrorCode.ERROR_10902026:
-                                    Toast.makeText(mContext, "获取手机验证码已到达上限", Toast.LENGTH_LONG).show();
-                                    break;
-                                default:
-                                    //其它错误码需要用户自己实现
-                                    String msg = String.format("注册测试版(%s)", getAccountByPhoneNOResult.getError_code());
-                                    Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
-                                    break;
-                        }
+                    else {
+                        Toast.makeText(mContext, "验证成功", Toast.LENGTH_SHORT).show();
                     }
-                    @Override
-                    public void onError(String error_code, Throwable throwable) {
-                    }
-                };
-
-                HttpSend.getInstance().getAccountByPhoneNO("86", phone, subscriberListener2);
-                break;
-
-            /**
-             *
-             * 找回密码先确认验证码
-             * 确认验证码成功之后跳转到重置密码界面
-             */
-            case R.id.findpwd_btn:
-                code = edt_code.getText().toString();
-                phone = edt_phone.getText().toString();
-                if (TextUtils.isEmpty(phone)) {
-                    Toast.makeText(mContext, "电话号码不能为空", Toast.LENGTH_SHORT).show();
                 }
-                else if (TextUtils.isEmpty(code)){
-                    Toast.makeText(mContext, "验证码不能为空", Toast.LENGTH_SHORT).show();
-                }else {
-                    /**
-                     * 确认验证码接口
-                     */
-                   SubscriberListener<HttpResult> subscriberListener = new SubscriberListener<HttpResult>() {
-                        @Override
-                        public void onStart() {
-                        }
+            }
+        }
+    };
 
-                       @Override
-                       public void onNext(HttpResult httpResult) {
-                           switch (httpResult.getError_code()) {
-                               case HttpErrorCode.ERROR_0:
-                                   Intent intent = new Intent(mContext, ChangePassword.class);
-                                   intent.putExtra("title", "修改密码");
-                                   intent.putExtra("VKey", VKey);
-                                   startActivity(intent);
-                                   break;
-                               case HttpErrorCode.ERROR_10901020:
-                                   Toast.makeText(mContext, "缺少输入参数", Toast.LENGTH_SHORT).show();
-                                   break;
-                               case HttpErrorCode.ERROR_41:
-                                   Toast.makeText(mContext, "操作数已达上限", Toast.LENGTH_SHORT).show();
-                                   break;
-                               case HttpErrorCode.ERROR_10902014:
-                                   Toast.makeText(mContext, "重置密码链接无效", Toast.LENGTH_SHORT).show();
 
-                                   break;
-                               default:
-                                   //其它错误码需要用户自己实现
-                                   String msg = String.format("注册测试版(%s)", httpResult.getError_code());
-                                   Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
-                                   break;
-                           }
-                       }
-
-                        @Override
-                        public void onError(String error_code, Throwable throwable) {
-                        }
-                    };
-                    LogUtil.e("ID",ID);
-                    LogUtil.e("VKey",VKey);
-                    LogUtil.e("phone",phone);
-                    LogUtil.e("code",code);
-                    HttpSend.getInstance().getCheckPhoneVKey(ID, VKey, "86", phone, code, subscriberListener);
-                }
-                break;
-            default:
-                break;
+    /**
+     * 隐藏键盘
+     */
+    private void hideKeyboard() {
+        View view = getCurrentFocus();
+        if (view != null) {
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromInputMethod(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
 
     /**
-     * 找回密码先确认验证码
-     * 确认验证码成功之后跳转到重置密码界面
+     * 判断手机号码是否合理
      */
-//    private void defindpwd() {
-//        ID = checkPhoneVKeyResult.getID();
-//        LogUtil.e("ID", ID);
-//        VKey = checkPhoneVKeyResult.getVKey();
-//        LogUtil.e("VKey", VKey);
-//        /**
-//         * 确认验证码接口
-//         */
-//        subscriberListener = new SubscriberListener<HttpResult>() {
-//            @Override
-//            public void onStart() {
-//
-//            }
-//
-//            @Override
-//            public void onNext(HttpResult httpResult) {
-//                switch (httpResult.getError_code()) {
-//                    case HttpErrorCode.ERROR_0:
-//                        Intent intent = new Intent(mContext, ChangePassword.class);
-//                        intent.putExtra("title", "修改密码");
-//                        intent.putExtra("VKey", VKey);
-//                        startActivity(intent);
-//                        break;
-//                    case HttpErrorCode.ERROR_10901020:
-//
-//                        break;
-//                    default:
-//                        //其它错误码需要用户自己实现
-//                        String msg = String.format("注册测试版(%s)", httpResult.getError_code());
-//                        Toast.makeText(MyApplication.app, msg, Toast.LENGTH_LONG).show();
-//                        break;
-//                }
-//            }
-//
-//            @Override
-//            public void onError(String error_code, Throwable throwable) {
-//
-//            }
-//        };
-//        HttpSend.getInstance().getCheckPhoneVKey(ID, VKey, "86", phone, code, subscriberListener);
-//    }
+    private boolean judgePhoneNums(String phoneNums) {
+        if (isMatchLength(phoneNums, 11) && isMobileNO(phoneNums)) {
+            return true;
+        }
+        usernameWrapper.setError("请输入正确的手机号");
+        return false;
+    }
 
+    /**
+     * 判断一个字符串的位数
+     */
+    private boolean isMatchLength(String str, int length) {
+        if (str.isEmpty()) {
+            return false;
+        } else {
+            return str.length() == length ? true : false;
+        }
+    }
+
+    /**
+     * 验证手机格式
+     *
+     * @param mobileNums
+     * @return
+     */
+    private boolean isMobileNO(String mobileNums) {
+        /*
+       * 移动：134、135、136、137、138、139、150、151、157(TD)、158、159、187、188
+       * 联通：130、131、132、152、155、156、185、186 电信：133、153、180、189、（1349卫通）
+       * 总结起来就是第一位必定为1，第二位必定为3或5或8，其他位置的可以为0-9
+       */
+        String telRegex = "[1][358]\\d{9}";// "[1]"代表第1位为数字1，"[358]"代表第二位可以为3、5、8中的一个，"\\d{9}"代表后面是可以是0～9的数字，有9位。
+        if (TextUtils.isEmpty(mobileNums))
+            return false;
+        else
+            return mobileNums.matches(telRegex);
+    }
+
+    /**
+     * 发送验证码的方法
+     */
+    private void sendcode() {
+        //2:通过sdk发送验证短信
+        SMSSDK.getVerificationCode("86", phone);
+        //3:把按钮变成不可点击的，并显示倒计时(正在获取)
+        getcode.setClickable(false);
+        getcode.setText("重新发送(" + i + ")");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (; i > 0; i--) {
+                    handler.sendEmptyMessage(-9);
+                    if (i < 0)
+                        break;
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                handler.sendEmptyMessage(-8);
+            }
+        }).start();
+    }
+
+
+    /**
+     * 点击事件
+     * @param view
+     */
+    @OnClick({R.id.getcode, R.id.findpwd_btn})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.getcode:  //获取验证码
+                hideKeyboard(); //隐藏键盘
+                phone = usernameWrapper.getEditText().getText().toString();  //拿到电话号码
+                //1:通过规则判断手机号
+                if (!judgePhoneNums(phone)) {
+                    return;
+                } else {
+                    usernameWrapper.setErrorEnabled(false);
+
+                    /**
+                     * 调用验证手机号码唯一
+                     * 的接口
+                     */
+                    sendcode();
+                }
+                break;
+            case R.id.findpwd_btn:  //找回密码界面
+                code = VerfcodeWrapper.getEditText().getText().toString();
+                if (TextUtils.isEmpty(phone)){
+                    usernameWrapper.setError("电话号码不能为空");
+                }
+                if (TextUtils.isEmpty(code)) {
+                    VerfcodeWrapper.setError("验证码不能为空");
+                } else {
+                    VerfcodeWrapper.setErrorEnabled(false);
+                    SMSSDK.submitVerificationCode("86", phone, code);
+
+                }
+                break;
+        }
+    }
 }

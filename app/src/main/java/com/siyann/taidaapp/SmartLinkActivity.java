@@ -95,6 +95,7 @@ public class SmartLinkActivity extends AppCompatActivity implements View.OnClick
         wifipwd= (EditText) findViewById(R.id.wifipwd);
 
         tx_receive=(TextView)findViewById(R.id.tx_receive);
+
         pwd=wifipwd.getText().toString();
 
         mlayout= (LinearLayout) findViewById(R.id.smartline_linear);
@@ -327,15 +328,20 @@ public class SmartLinkActivity extends AppCompatActivity implements View.OnClick
                     Toast.makeText(context,"设备不支持5G网络",Toast.LENGTH_SHORT).show();
                     return;
                 }
+                /**
+                 * 检查WiFi是否加密
+                 */
                 if (!isWifiEncrypt) {
-                    if (TextUtils.isEmpty(pwd)) {
-                        Toast.makeText(context,"请输入WiFi密码",Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+                }
+                if (TextUtils.isEmpty(pwd)) {
+                    Toast.makeText(context,"请输入WiFi密码",Toast.LENGTH_SHORT).show();
+                    return;
                 }
                 mlayout.setVisibility(View.GONE);   //隐藏输入框
                 mlayout_link.setVisibility(View.VISIBLE);//显示连接设备的页面
+
                 sendWifi();
+
                 isSend=true;
                 tx_receive.append("开始发包......\n");
                 break;

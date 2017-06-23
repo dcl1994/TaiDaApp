@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 
+/**
+ * 自定义popupmenu
+ */
 public class PopupMenu extends PopupWindow {
     private ViewGroup mContentView;
     private OnMenuItemSelectedListener mListener;

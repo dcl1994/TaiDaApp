@@ -8,10 +8,16 @@ import java.io.IOException;
 import java.net.InetAddress;
 
 /**
- * Created by dansesshou on 17/2/17.
+ * 工具类
  */
 
 public class Utils {
+    /**
+     * 获取WiFi地址
+     * @param mContext
+     * @return
+     * @throws IOException
+     */
 
     public static InetAddress getIntentAddress(Context mContext)
             throws IOException {

@@ -24,7 +24,8 @@
     <string name="smartlink_network">摄像头需要连接的Wi-Fi(暂不支持5G网络)</string>
     <string name="link">正在连接中...</string>
     <string name="wait_link">请耐心等待，马上就要连接成功了.</string>
-
+    <string name="twitter">在这里与邻里之间愉快的交流吧!~(字数：60字以内)</string>
+    <string name="feedback">对我们有什么意见或建议欢迎反馈!~(50字以内)</string>
 
     <!--一米菜园的字符集-->
     <string name="home">首页</string>
@@ -32,5 +33,17 @@
     <string name="shoppcart">购物车</string>
     <string name="my">我的</string>
     <string name="abaout">为了能准确将蔬菜送到您的手里请将个人信息填写完整！</string>
+
+    <string name="bind_wx">绑定微信</string>
+    <string name="text_wx">绑定已有账号?</string>
+    <string name="cancel">取消</string>
+
+    <!--调查问卷选项-->
+    <string name="seq1">经常参加</string>
+    <string name="seq2">有时参加</string>
+    <string name="seq3">没有参加</string>
+    <string name="seq4">没有举办</string>
+
+    <string name="submit">提交</string>
 
 </resources>

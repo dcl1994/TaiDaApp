@@ -17,14 +17,6 @@
             android:layout_centerInParent="true"
             android:background="@drawable/images_app_logo" />
     </RelativeLayout>
-    <ProgressBar
-        android:id="@+id/register_progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone" />
 
     <ScrollView
         android:id="@+id/register_form"
@@ -52,6 +44,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="3dp"/>
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/PhoneWrapper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
@@ -113,6 +106,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="3dp"/>
                 <android.support.design.widget.TextInputLayout
+                    android:id="@+id/PasswordreWrapper"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <EditText
@@ -141,6 +135,5 @@
         </RelativeLayout>
 
     </ScrollView>
-
 
 </LinearLayout>

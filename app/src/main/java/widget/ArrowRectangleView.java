@@ -17,7 +17,7 @@ import android.view.ViewGroup;
 import com.siyann.taidaapp.R;
 
 /**
- * Created by qianxin on 2016/3/23.
+ * 自定义menu的类
  */
 public class ArrowRectangleView extends ViewGroup {
     // arrow's width
