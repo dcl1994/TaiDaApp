@@ -46,4 +46,8 @@
 
     <string name="submit">提交</string>
 
+    <string name="hint">没有设备请添加</string>
+
+
+
 </resources>

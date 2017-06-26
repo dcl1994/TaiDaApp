@@ -18,7 +18,7 @@ public class GlideImageLoader extends ImageLoader {
          */
         Glide.with(context)
                 .load(path)
-                .placeholder(R.drawable.plugin_pictures)    //占位图
+                .placeholder(R.drawable.plugin_nopicture)    //占位图
                 .error(R.drawable.plugin_pictures)          //错误图
                 .into(imageView);
     }

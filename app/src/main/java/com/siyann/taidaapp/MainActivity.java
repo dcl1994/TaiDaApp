@@ -456,19 +456,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private void exit() {
         if ((System.currentTimeMillis() - exittime) > 2000) {
-
             Toast.makeText(getApplicationContext(), "再按一次退出程序", Toast.LENGTH_SHORT).show();
-
             exittime = System.currentTimeMillis();
-
+        } else {
             /**
              * 关闭当前界面
              */
             ActivityCollector.finishAll();
-
-
             android.os.Process.killProcess(android.os.Process.myPid());
-
             /**
              * 结束时关闭
              */

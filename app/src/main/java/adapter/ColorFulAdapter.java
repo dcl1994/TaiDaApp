@@ -1,10 +1,12 @@
 package adapter;
 
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.siyann.taidaapp.CommunityDetailActivity;
@@ -25,12 +27,14 @@ public class ColorFulAdapter extends RecyclerView.Adapter<ColorFulAdapter.ViewHo
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         TextView introduction;
+        LinearLayout linearLayout;
         private View colorfulview;
         public ViewHolder(View view) {
             super(view);
             colorfulview=view;
             title = (TextView) view.findViewById(R.id.community_title);
             introduction = (TextView) view.findViewById(R.id.community_introduction);
+            linearLayout= (LinearLayout) view.findViewById(R.id.community_line);
         }
     }
 
@@ -56,6 +60,11 @@ public class ColorFulAdapter extends RecyclerView.Adapter<ColorFulAdapter.ViewHo
                 Intent intent=new Intent(parent.getContext(), CommunityDetailActivity.class);
                 intent.putExtra("content",community.getContent());
                 intent.putExtra("title","详情");
+
+                /**
+                 *设置背景颜色
+                 */
+                holder.linearLayout.setBackgroundColor(ContextCompat.getColor(parent.getContext(),R.color.gray));
                 parent.getContext().startActivity(intent);
             }
         });

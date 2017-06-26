@@ -3,6 +3,7 @@ package com.siyann.taidaapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Process;
 import android.support.design.widget.TextInputLayout;
@@ -11,9 +12,11 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +48,7 @@ import utils.Url;
  * 泰达的登录界面
  * 实现一次登录就不用再登录了
  */
-public class LoginActivity extends AppCompatActivity  {
+public class LoginActivity extends AppCompatActivity {
     @Bind(R.id.usernameWrapper)
     TextInputLayout usernameWrapper;
     @Bind(R.id.passwordWrapper)
@@ -56,6 +59,8 @@ public class LoginActivity extends AppCompatActivity  {
             TextView register;
     @Bind(R.id.wx_login)    //微信登录
             Button wxLogin;
+    @Bind(R.id.line_login)
+    LinearLayout lineLogin;
 
     private Context mContext;
 
@@ -67,9 +72,7 @@ public class LoginActivity extends AppCompatActivity  {
 
     private SweetAlertDialog pdialog;  //清新dialog
 
-    JSONObject jsonObject=null;
-    JSONObject jsonObject1=null;
-
+    JSONObject jsonObject = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +80,51 @@ public class LoginActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mContext = LoginActivity.this;
+
+        addLayoutListener(lineLogin,login);
+
+    }
+
+    public void addLayoutListener(final View lineLogin, final View scroll) {
+        lineLogin.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect rect = new Rect();
+                /**
+                 * 1获取main在窗体的可视区域
+                 */
+                lineLogin.getWindowVisibleDisplayFrame(rect);
+                /**
+                 2获取main在窗体的不可视区域高度，在键盘没有弹起时
+                 main.getRootView().getHeight() 调节度应该和rect.bottom高度一样
+                 */
+                int mainInvisibleHight = lineLogin.getRootView().getHeight() - rect.bottom;
+
+                /**
+                 * 3.不可见区域大于100，说明键盘弹起了
+                 */
+                if (mainInvisibleHight > 100) {
+                    int[] location = new int[2];
+                    scroll.getLocationInWindow(location);
+
+                    /**
+                     * 4，获取scroll的窗体坐标，算出main需要滚动的高度
+                     */
+                    int scrollHeight = (location[1] + scroll.getHeight()) - rect.bottom;
+
+
+                    /**
+                     * 5.让界面整体上移键盘的高度
+                     */
+                    lineLogin.scrollTo(0, scrollHeight);
+                } else {
+                    /**
+                     * 3.不可见区域小于100，说明键盘隐藏了，把界面下移，移回到原有高度
+                     */
+                    lineLogin.scrollTo(0, 0);
+                }
+            }
+        });
     }
 
 
@@ -123,7 +171,7 @@ public class LoginActivity extends AppCompatActivity  {
         return super.onKeyDown(keyCode, event);
     }
 
-    @OnClick({R.id.login, R.id.register, R.id.wx_login,R.id.forgetpwd})
+    @OnClick({R.id.login, R.id.register, R.id.wx_login, R.id.forgetpwd})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.login:        //登录
@@ -136,7 +184,7 @@ public class LoginActivity extends AppCompatActivity  {
                  */
                 if (!judgePhoneNums(username)) {
                     return;
-                }else if (!validatePassword(password)) {
+                } else if (!validatePassword(password)) {
                     passwordWrapper.setError("密码长度不能少于6位");
                 } else {
                     usernameWrapper.setErrorEnabled(false);
@@ -220,27 +268,27 @@ public class LoginActivity extends AppCompatActivity  {
     }
 
 
-
     /**
      * 得到返回值
+     *
      * @param requestCode
      * @param resultCode
      * @param data
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode){
+        switch (requestCode) {
             case 1:
-                if (resultCode==RESULT_OK){
-                    String phone=data.getStringExtra("phone");
-                    String password=data.getStringExtra("password");
+                if (resultCode == RESULT_OK) {
+                    String phone = data.getStringExtra("phone");
+                    String password = data.getStringExtra("password");
                     /**
                      * 将返回的数据填充到edittext中
                      */
                     usernameWrapper.getEditText().setText(phone);
                     passwordWrapper.getEditText().setText(password);
                 }
-            break;
+                break;
             default:
                 break;
         }
@@ -250,57 +298,58 @@ public class LoginActivity extends AppCompatActivity  {
      * 登录的方法
      */
     private void dologin() {
-        RequestBody body=new FormBody.Builder()
-                .add("username",username)
-                .add("password",password)
+        RequestBody body = new FormBody.Builder()
+                .add("username", username)
+                .add("password", password)
                 .build();
         OkHttpUtil.sendPostRequest(Url.login, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                LogUtil.e("e",e+"");
+                LogUtil.e("e", e + "");
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String result=response.body().string();
-                LogUtil.e("result",result);
+                String result = response.body().string();
+                LogUtil.e("result", result);
                 try {
-                    jsonObject=new JSONObject(result);
-                    final String msg=jsonObject.getString("msg");
-                    final String status=jsonObject.getString("status");
+                    jsonObject = new JSONObject(result);
+                    final String msg = jsonObject.getString("msg");
+                    final String status = jsonObject.getString("status");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             /**
                              * 登录成功
                              */
-                            if (status.equals("1")){
+                            if (status.equals("1")) {
                                 try {
-                                    JSONObject jsonObject1=null;
-                                    jsonObject1=jsonObject.getJSONObject("data");
-                                    final String id=jsonObject1.getString("id");
+                                    JSONObject jsonObject1 = null;
+                                    jsonObject1 = jsonObject.getJSONObject("data");
+                                    final String id = jsonObject1.getString("id");
 
                                     /**
                                      * 将电话号码和用户ID存缓存
                                      */
-                                    SharedPreferences .Editor editor=getSharedPreferences("data",MODE_PRIVATE).edit();
-                                    editor.putString("id",id);
-                                    editor.putString("username",username);
+                                    SharedPreferences.Editor editor = getSharedPreferences("data", MODE_PRIVATE).edit();
+                                    editor.putString("id", id);
+                                    editor.putString("username", username);
                                     editor.commit();
 
-                                    LogUtil.e("msg",msg);
-                                    LogUtil.e("status",status);
-                                    LogUtil.e("id",id);
+                                    LogUtil.e("msg", msg);
+                                    LogUtil.e("status", status);
+                                    LogUtil.e("id", id);
 
 
-                                    Toast.makeText(mContext,msg,Toast.LENGTH_SHORT).show();
-                                    Intent intent=new Intent(mContext,MainActivity.class);
+                                    Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(mContext, MainActivity.class);
                                     startActivity(intent);
                                     finish();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
 
-                            }else {
+                            } else {
                                 /**
                                  * 登录失败弹出提示框
                                  */

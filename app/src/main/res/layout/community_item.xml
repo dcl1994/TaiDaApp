@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_marginTop="10dp"
+    android:id="@+id/community_line"
     android:background="@drawable/radius_drawable_bg">
     <TextView
         android:id="@+id/community_title"

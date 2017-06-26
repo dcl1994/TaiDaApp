@@ -1,18 +1,19 @@
 package adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.siyann.taidaapp.R;
-import com.siyann.taidaapp.RoadLookTvActivity;
+import com.tencent.smtt.sdk.TbsVideo;
 
 import java.util.List;
 
+import utils.LogUtil;
 import widget.Road;
 
 /**
@@ -51,10 +52,12 @@ public class RoadLookAdapter extends RecyclerView.Adapter<RoadLookAdapter.ViewHo
                 int position=holder.getAdapterPosition();
                 Road road=mroadList.get(position);
 
-                Intent intent=new Intent(v.getContext(), RoadLookTvActivity.class);
-                intent.putExtra("tv_url",road.getLink());
-                v.getContext().startActivity(intent);
-
+                String url=road.getLink();
+                LogUtil.e("url",url);
+                Toast.makeText(mContext,"开始播放",Toast.LENGTH_SHORT).show();
+                if (TbsVideo.canUseTbsPlayer(mContext)){
+                    TbsVideo.openVideo(mContext,url);
+                }
             }
         });
         return holder;

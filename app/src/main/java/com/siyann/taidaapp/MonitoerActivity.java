@@ -1,18 +1,22 @@
 package com.siyann.taidaapp;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,8 +28,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hwangjr.rxbus.annotation.Subscribe;
-import com.hwangjr.rxbus.annotation.Tag;
 import com.p2p.core.BaseMonitorActivity;
 import com.p2p.core.P2PHandler;
 import com.p2p.core.P2PValue;
@@ -33,9 +35,8 @@ import com.p2p.core.P2PView;
 
 import java.io.File;
 
-import entity.AlarmInfo;
 import utils.LogUtil;
-import utils.RxBUSAction;
+import widget.Equipment;
 
 /**
  * 监控的界面,登录成功后才可以进入
@@ -54,11 +55,11 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
 
     private RelativeLayout rlP2pview;
 
-    private String equipmentname = "";    //设备昵称
+    private String equipmentNickname=""; //设备昵称
 
-    private String equipmentid = "";      //设备ID
+    private String equipmentid ="";      //设备ID
 
-    private String equipmentpwd = "";     //设备密码
+    private String equipmentpwd ="";     //设备密码
 
     private ImageView volume;            //静音按键
 
@@ -71,8 +72,6 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
     private TextView tvContent;
 
     private LinearLayout l_control;
-
-    SharedPreferences sharedPreferences;
 
     private RelativeLayout mrelative;   //标题栏
 
@@ -109,13 +108,13 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
 
     private boolean ischeck = false;    //清晰度切换的标志
 
-    private boolean islocking=false;    //锁定设备的按钮
+    private boolean islocking = false;    //锁定设备的按钮
 
     private ImageView close_voice;      //静音键
 
-    private  String ischecked;      //获取设备列表传递过来的布防状态
 
-    private AlarmInfo info;
+    public  static boolean linesuccess=false; // 连接设备成功
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,21 +127,6 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         regFilter();
 
         CallOnClick();  //连接设备
-
-        Intent intent=getIntent();
-        ischecked=intent.getStringExtra("ischecked");
-        LogUtil.e("ischecked", ischecked);
-
-    }
-
-    @Subscribe(
-            tags = {
-                    @Tag(RxBUSAction.EVENT_ALARM)
-            }
-    )
-    public void initUI(AlarmInfo info) {
-        this.info = info;
-        LogUtil.e("info",info+"");
     }
 
     /**
@@ -153,25 +137,25 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         super.onPause();
         P2PHandler.getInstance().reject();
         Toast.makeText(mContext, "挂断", Toast.LENGTH_SHORT).show();
-        finish();
     }
 
     private void init() {
+
         /**
          * 底部栏的静音键
          */
-        close_voice= (ImageView) findViewById(R.id.close_voice);
+        close_voice = (ImageView) findViewById(R.id.close_voice);
         close_voice.setOnClickListener(this);
         /**
          * 截图按键
          */
-        screenshot= (ImageView) findViewById(R.id.iv_screenshot);
+        screenshot = (ImageView) findViewById(R.id.iv_screenshot);
         screenshot.setOnClickListener(this);
 
         /**
          * 锁定设备的按键
          */
-        locking= (ImageView) findViewById(R.id.iv_defence);
+        locking = (ImageView) findViewById(R.id.iv_defence);
         locking.setOnClickListener(this);
 
         control_top = (LinearLayout) findViewById(R.id.control_top);
@@ -185,13 +169,13 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         /**
          * 调整视频清晰度
          */
-        video_mode_hd= (TextView) findViewById(R.id.video_mode_hd);
+        video_mode_hd = (TextView) findViewById(R.id.video_mode_hd);
         video_mode_hd.setOnClickListener(this);
 
-        video_mode_sd= (TextView) findViewById(R.id.video_mode_sd);
+        video_mode_sd = (TextView) findViewById(R.id.video_mode_sd);
         video_mode_sd.setOnClickListener(this);
 
-        video_mode_ld= (TextView) findViewById(R.id.video_mode_ld);
+        video_mode_ld = (TextView) findViewById(R.id.video_mode_ld);
         video_mode_ld.setOnClickListener(this);
         /**
          * 底部菜单栏的按钮
@@ -215,24 +199,12 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
 
         rlP2pview = (RelativeLayout) findViewById(R.id.r_p2pview);  //p2pview的父控件
 
-
-
-        /**
-         * 从缓存中取出设备的昵称，ID，密码
-         */
-        sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-
-        equipmentname = sharedPreferences.getString("equipmentname", "");
-        LogUtil.e("equipmentname", equipmentname);
-
-        equipmentpwd = sharedPreferences.getString("equipmentpwd", "");
-
-
         mImageView = (ImageView) findViewById(R.id.back);
 
         mImageView.setOnClickListener(this);
 
         btnTalk = (ImageView) findViewById(R.id.iv_speak);
+
 
         /**
          * 静音
@@ -244,8 +216,20 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         close_voice.setOnClickListener(this);
         send_voice = (ImageView) findViewById(R.id.send_voice);
         send_voice.setOnClickListener(this);
-    }
 
+        /**
+         * 获取adapter中传递过来的值
+         */
+        Intent intent = getIntent();
+        if (intent !=null) {
+            equipmentNickname=intent.getStringExtra("nickname");
+            equipmentid = intent.getStringExtra("id");
+            equipmentpwd = intent.getStringExtra("pwd");
+            LogUtil.e("Oncreateid", ""+equipmentid);
+            LogUtil.e("Oncreatepwd", equipmentpwd);
+            LogUtil.e("nickname",equipmentNickname);
+        }
+    }
     private void getScreenWithHeigh() {
         DisplayMetrics dm = new DisplayMetrics();
         // 获取屏幕信息
@@ -340,9 +324,10 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
                 int[] type = intent.getIntArrayExtra("type");
                 P2PView.type = type[0];
                 P2PView.scale = type[1];
-              //  tvContent.append("\n 监控数据接收");
-                LogUtil.e("dxsTest", "监控数据接收:" + equipmentid);
+                //  tvContent.append("\n 监控数据接收");
+                LogUtil.e("dxsTest", "监控数据接收:");
                 P2PHandler.getInstance().openAudioAndStartPlaying(1);//打开音频并准备播放，calllType与call时type一致
+
             } else if (intent.getAction().equals(P2P_READY)) {
                 //tvContent.append("\n 监控准备,开始监控");
                 LogUtil.e("dxsTest", "监控准备,开始监控" + equipmentid);
@@ -353,8 +338,13 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
                 mtextView.setVisibility(View.GONE);
 
                 pView.sendStartBrod();
+                /**
+                 * 监控成功设置为
+                 */
+                linesuccess=true;
+
             } else if (intent.getAction().equals(P2P_REJECT)) {
-               // tvContent.append("\n 监控挂断");
+                // tvContent.append("\n 监控挂断");
                 LogUtil.e("dxsTest", "监控挂断" + equipmentid);
             }
         }
@@ -363,38 +353,46 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
     @Override
     public void onDestroy() {
         unregisterReceiver(mReceiver);
+
+        /**
+         * 挂断
+         */
         P2PHandler.getInstance().reject();
         super.onDestroy();
     }
+
     @Override
     protected void onCaptureScreenResult(boolean isSuccess, int prePoint) {
         if (isSuccess) {
-            Toast.makeText(mContext, "连接设备成功", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "截图成功", Toast.LENGTH_SHORT).show();
         }
     }
+
     @Override
     protected void onVideoPTS(long videoPTS) {
     }
-
     @Override
     protected void onP2PViewSingleTap() {
 
     }
-
     @Override
     protected void onP2PViewFilling() {
 
     }
-
-    //连设备的方法
+    /**
+     * 连接摄像头的方法
+     */
     private void CallOnClick() {
-        LoginID = sharedPreferences.getString("LoginID", "");
+        SharedPreferences pref=getSharedPreferences("data", MODE_PRIVATE);
+        LoginID = pref.getString("LoginID", "");
         LogUtil.e("LoginID", LoginID);
-        equipmentid = sharedPreferences.getString("equipmentid", "");
-        LogUtil.e("equipmentid", equipmentid);
         String pwd = P2PHandler.getInstance().EntryPassword(equipmentpwd);//经过转换后的设备密码
+        LogUtil.e("pwd",pwd);
+        LogUtil.e("equipmentid",""+equipmentid);
         P2PHandler.getInstance().call(LoginID, pwd, true, 1, equipmentid, "", "", 2, equipmentid);
     }
+
+
 
     /**
      * 点击事件
@@ -405,7 +403,17 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back:
-                finish();
+                if (linesuccess){
+                    /**
+                     * 调用截图的方法
+                     */
+                    ScreenShotClock();
+                    P2PHandler.getInstance().reject();
+                    finish();
+                }else {
+                    P2PHandler.getInstance().reject();
+                    finish();
+                }
                 break;
             /**
              * 静音
@@ -441,14 +449,14 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
              * 布防的点击事件
              */
             case R.id.iv_defence:
-                islocking=!islocking;
-                if (islocking){
+                islocking = !islocking;
+                if (islocking) {
                     locking.setImageResource(R.drawable.selector_portrait_arm);
-                    Toast.makeText(v.getContext(),"布防",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(v.getContext(), "布防", Toast.LENGTH_SHORT).show();
                     P2PHandler.getInstance().setRemoteDefence(equipmentid, equipmentpwd, 1);
-                }else{
+                } else {
                     locking.setImageResource(R.drawable.selector_portrait_disarm);
-                    Toast.makeText(v.getContext(),"撤防",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(v.getContext(), "撤防", Toast.LENGTH_SHORT).show();
                     P2PHandler.getInstance().setRemoteDefence(equipmentid, equipmentpwd, 0);
                 }
                 break;
@@ -457,8 +465,13 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
              * 截图的点击事件
              */
             case R.id.iv_screenshot:
-                Toast.makeText(mContext,"截图",Toast.LENGTH_SHORT).show();
-                ScreenShotClock();
+                if (ContextCompat.checkSelfPermission
+                        (MonitoerActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(MonitoerActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                }else {
+                    ScreenShotClock();
+                }
                 break;
             /**
              * 高清
@@ -503,28 +516,28 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
                 changeMuteState();
                 break;
             default:
-            break;
+                break;
         }
     }
 
     /**
      * 流畅
      */
-    void LDOnClick(){
+    void LDOnClick() {
         P2PHandler.getInstance().setVideoMode(P2PValue.VideoMode.VIDEO_MODE_LD);
     }
 
     /**
      * 标清
      */
-    void SDOnclick(){
+    void SDOnclick() {
         P2PHandler.getInstance().setVideoMode(P2PValue.VideoMode.VIDEO_MODE_SD);
     }
 
     /**
      * 高清
      */
-    void HDOnClick(){
+    void HDOnClick() {
         P2PHandler.getInstance().setVideoMode(P2PValue.VideoMode.VIDEO_MODE_HD);
     }
 
@@ -532,14 +545,44 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
     /**
      * 自定义截图路径
      */
-    void ScreenShotClock(){
+    void ScreenShotClock() {
         // 参数是一个标记,截图回调会原样返回这个标记
         //注意SD卡权限
-        File file=Environment.getExternalStorageDirectory();
-        int d = P2PHandler.getInstance().setScreenShotpath(file+"/sdcard/11/22/33", "123.jpg");
-        Log.e("dxsTest", "d:" + d);
-        captureScreen(-1);
+        File file = Environment.getExternalStorageDirectory();
+        long time = System.currentTimeMillis();
+        int d = P2PHandler.getInstance().setScreenShotpath(file + "/sdcard/11/22/33", time+".jpg");
+        LogUtil.e("ddddd",d+"");
+        /**
+         * 如果创建路径成功的话就调用截图的方法
+         */
+        if (d==0){
+            String imagepath=file + "/sdcard/11/22/33/"+time+".jpg";
+            Equipment equipment=new Equipment();
+            equipment.setImagepath(imagepath);
+            equipment.updateAll("equipid=?",equipmentid);
+
+            captureScreen(-1); //普通截图
+        }
     }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode){
+            case 1:
+                if (grantResults.length>0&&grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    ScreenShotClock();
+                }else {
+                    Toast.makeText(mContext,"没有此权限",Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+
+    }
+
+
+
+
     /**
      * 设置静音的方法
      */
@@ -559,7 +602,6 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         }
     }
 
-
     /**
      * 横竖屏切换的方法
      *
@@ -574,7 +616,7 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
             mrelative.setVisibility(View.GONE);
             control_bottom.setVisibility(View.VISIBLE);
         } else {
-            this.getWindow().setFlags(0,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            this.getWindow().setFlags(0, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             // 设置横屏
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             mrelative.setVisibility(View.VISIBLE);
@@ -604,4 +646,19 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
 
     }
 
+
+    /**
+     * 重写返回键
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode==KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0){
+
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 }

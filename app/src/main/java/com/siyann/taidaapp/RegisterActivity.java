@@ -2,6 +2,7 @@ package com.siyann.taidaapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +10,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -58,6 +60,8 @@ public class RegisterActivity extends AppCompatActivity {
     LinearLayout lineart;
     @Bind(R.id.PasswordreWrapper)
     TextInputLayout PasswordreWrapper;
+    @Bind(R.id.line_login)
+    LinearLayout lineLogin;
     private Context mContext;
 
     private String phone;   //电话号码
@@ -80,6 +84,49 @@ public class RegisterActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mContext = this;
         init();
+
+        addLayoutListener(lineLogin,registerBtn);
+    }
+    public void addLayoutListener(final View lineLogin, final View scroll) {
+        lineLogin.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect rect = new Rect();
+                /**
+                 * 1获取main在窗体的可视区域
+                 */
+                lineLogin.getWindowVisibleDisplayFrame(rect);
+                /**
+                 2获取main在窗体的不可视区域高度，在键盘没有弹起时
+                 main.getRootView().getHeight() 调节度应该和rect.bottom高度一样
+                 */
+                int mainInvisibleHight = lineLogin.getRootView().getHeight() - rect.bottom;
+
+                /**
+                 * 3.不可见区域大于100，说明键盘弹起了
+                 */
+                if (mainInvisibleHight > 100) {
+                    int[] location = new int[2];
+                    scroll.getLocationInWindow(location);
+
+                    /**
+                     * 4，获取scroll的窗体坐标，算出main需要滚动的高度
+                     */
+                    int scrollHeight = (location[1] + scroll.getHeight()) - rect.bottom;
+
+
+                    /**
+                     * 5.让界面整体上移键盘的高度
+                     */
+                    lineLogin.scrollTo(0, scrollHeight);
+                } else {
+                    /**
+                     * 3.不可见区域小于100，说明键盘隐藏了，把界面下移，移回到原有高度
+                     */
+                    lineLogin.scrollTo(0, 0);
+                }
+            }
+        });
     }
 
     /**
@@ -214,6 +261,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     /**
      * 点击事件
+     *
      * @param view
      */
     @OnClick({R.id.getcode, R.id.register_btn})
@@ -226,9 +274,9 @@ public class RegisterActivity extends AppCompatActivity {
                 //1:通过规则判断手机号
                 if (!judgePhoneNums(phone)) {
                     return;
-                }else if (!validatePassword(password)){
+                } else if (!validatePassword(password)) {
                     PasswordreWrapper.setError("密码长度不能少于6位");
-                }else {
+                } else {
                     PhoneWrapper.setErrorEnabled(false);
                     PasswordreWrapper.setErrorEnabled(false);
 
@@ -240,17 +288,17 @@ public class RegisterActivity extends AppCompatActivity {
                 break;
 
             case R.id.register_btn: //注册的点击事件
-                str_code=VerfcodeWrapper.getEditText().getText().toString();
-                LogUtil.e("strcode",str_code);
+                str_code = VerfcodeWrapper.getEditText().getText().toString();
+                LogUtil.e("strcode", str_code);
 
-                if (TextUtils.isEmpty(str_code)){
+                if (TextUtils.isEmpty(str_code)) {
                     VerfcodeWrapper.setError("验证码不能为空");
-                }else {
+                } else {
                     VerfcodeWrapper.setErrorEnabled(false);
                     /**
                      * 验证的监听需要传递三个参数
                      */
-                    SMSSDK.submitVerificationCode("86", phone,str_code);
+                    SMSSDK.submitVerificationCode("86", phone, str_code);
                 }
                 break;
             default:
@@ -262,7 +310,7 @@ public class RegisterActivity extends AppCompatActivity {
     /**
      * 发送验证码的方法
      */
-    private void sendcode(){
+    private void sendcode() {
         //2:通过sdk发送验证短信
         SMSSDK.getVerificationCode("86", phone);
         //3:把按钮变成不可点击的，并显示倒计时(正在获取)
@@ -271,9 +319,9 @@ public class RegisterActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                for (; i> 0; i--) {
+                for (; i > 0; i--) {
                     handler.sendEmptyMessage(-9);
-                    if (i< 0)
+                    if (i < 0)
                         break;
                     try {
                         Thread.sleep(1000);
@@ -291,39 +339,39 @@ public class RegisterActivity extends AppCompatActivity {
      * 注册的方法
      */
     private void doRegister() {
-        RequestBody body=new FormBody.Builder()
-                .add("username",phone)
-                .add("password",password)
+        RequestBody body = new FormBody.Builder()
+                .add("username", phone)
+                .add("password", password)
                 .build();
 
         OkHttpUtil.sendPostRequest(Url.register, body, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                LogUtil.e("e",e+"");
+                LogUtil.e("e", e + "");
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                String result=response.body().string();
+                String result = response.body().string();
                 try {
-                    jsonobject=new JSONObject(result);
+                    jsonobject = new JSONObject(result);
                     final String status = jsonobject.getString("status");
-                    final String msg =jsonobject.getString("msg");
+                    final String msg = jsonobject.getString("msg");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             /**
                              * 请求成功
                              */
-                            if (status.equals("1")){
-                                Toast.makeText(mContext, msg,Toast.LENGTH_SHORT).show();
-                                Intent intent=new Intent();
-                                intent.putExtra("phone",phone);
+                            if (status.equals("1")) {
+                                Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent();
+                                intent.putExtra("phone", phone);
                                 intent.putExtra("password", password);
                                 setResult(RESULT_OK, intent);
                                 finish();
-                            }else {
-                                Toast.makeText(mContext,msg,Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -341,8 +389,8 @@ public class RegisterActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        Intent intent=new Intent();
-        intent.putExtra("phone",phone);
+        Intent intent = new Intent();
+        intent.putExtra("phone", phone);
         intent.putExtra("password", password);
         setResult(RESULT_OK, intent);
         finish();

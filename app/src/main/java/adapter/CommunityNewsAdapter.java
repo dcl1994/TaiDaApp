@@ -2,11 +2,13 @@ package adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -32,13 +34,14 @@ public class CommunityNewsAdapter  extends RecyclerView.Adapter<CommunityNewsAda
         private TextView introduction;
         private ImageView content_img;
         private View communityview;
-
+        private LinearLayout mylinearlayout;
         public ViewHolder(View view) {
             super(view);
             communityview=view;
             title= (TextView) view.findViewById(R.id.community_title);
             introduction= (TextView) view.findViewById(R.id.community_introduction);
             content_img= (ImageView) view.findViewById(R.id.content_img);
+            mylinearlayout= (LinearLayout) view.findViewById(R.id.community_line);
         }
     }
 
@@ -67,11 +70,17 @@ public class CommunityNewsAdapter  extends RecyclerView.Adapter<CommunityNewsAda
             public void onClick(View v) {
                 int position=holder.getAdapterPosition();
                 Community community=mcommunityList.get(position);
-                LogUtil.e("position",community.getContent());
+                LogUtil.e("position", community.getContent());
 
                 Intent intent=new Intent(mContext, CommunityDetailActivity.class);
                 intent.putExtra("content",community.getContent());
                 intent.putExtra("title","阅读全文");
+
+                /**
+                 * 设置背景
+                 */
+                holder.mylinearlayout.setBackgroundColor(ContextCompat.getColor(mContext,R.color.gray));
+
                 mContext.startActivity(intent);
 
             }

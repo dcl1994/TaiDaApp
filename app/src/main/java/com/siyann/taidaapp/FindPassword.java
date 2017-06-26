@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.TextInputLayout;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import butterknife.Bind;
@@ -35,6 +38,8 @@ public class FindPassword extends Activity {
     Button getcode;
     @Bind(R.id.findpwd_btn)
     Button findpwdBtn;
+    @Bind(R.id.line_login)
+    RelativeLayout lineLogin;
 
     private Context mContext;
 
@@ -49,13 +54,58 @@ public class FindPassword extends Activity {
         ButterKnife.bind(this);
         mContext = FindPassword.this;
         init();
+
+        addLayoutListener(lineLogin,findpwdBtn);
+
     }
+    public void addLayoutListener(final View lineLogin, final View scroll) {
+        lineLogin.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect rect = new Rect();
+                /**
+                 * 1获取main在窗体的可视区域
+                 */
+                lineLogin.getWindowVisibleDisplayFrame(rect);
+                /**
+                 2获取main在窗体的不可视区域高度，在键盘没有弹起时
+                 main.getRootView().getHeight() 调节度应该和rect.bottom高度一样
+                 */
+                int mainInvisibleHight = lineLogin.getRootView().getHeight() - rect.bottom;
+
+                /**
+                 * 3.不可见区域大于100，说明键盘弹起了
+                 */
+                if (mainInvisibleHight > 100) {
+                    int[] location = new int[2];
+                    scroll.getLocationInWindow(location);
+
+                    /**
+                     * 4，获取scroll的窗体坐标，算出main需要滚动的高度
+                     */
+                    int scrollHeight = (location[1] + scroll.getHeight()) - rect.bottom;
+
+
+                    /**
+                     * 5.让界面整体上移键盘的高度
+                     */
+                    lineLogin.scrollTo(0, scrollHeight);
+                } else {
+                    /**
+                     * 3.不可见区域小于100，说明键盘隐藏了，把界面下移，移回到原有高度
+                     */
+                    lineLogin.scrollTo(0, 0);
+                }
+            }
+        });
+    }
+
 
     private void init() {
         /**
          * 从缓存中取出用户ID，UID
          */
-        SharedPreferences  sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
         uid = sharedPreferences.getString("id", "");
         LogUtil.e("uid", uid);
 
@@ -106,8 +156,7 @@ public class FindPassword extends Activity {
                         finish();
                     } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                         Toast.makeText(getApplicationContext(), "验证码已发送", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
+                    } else {
                         Toast.makeText(mContext, "验证成功", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -199,6 +248,7 @@ public class FindPassword extends Activity {
 
     /**
      * 点击事件
+     *
      * @param view
      */
     @OnClick({R.id.getcode, R.id.findpwd_btn})
@@ -222,7 +272,7 @@ public class FindPassword extends Activity {
                 break;
             case R.id.findpwd_btn:  //找回密码界面
                 code = VerfcodeWrapper.getEditText().getText().toString();
-                if (TextUtils.isEmpty(phone)){
+                if (TextUtils.isEmpty(phone)) {
                     usernameWrapper.setError("电话号码不能为空");
                 }
                 if (TextUtils.isEmpty(code)) {

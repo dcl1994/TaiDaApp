@@ -13,11 +13,18 @@ public class Equipment  extends DataSupport {
 
     public Equipment(){}
 
-    public Equipment(String nickname,int equipid,String password,String imagepath){
+    public String getImagepath() {
+        return imagepath;
+    }
+
+    public void setImagepath(String imagepath) {
+        this.imagepath = imagepath;
+    }
+
+    public Equipment(String nickname,int equipid,String password){
         this.nickname=nickname;
         this.equipid=equipid;
         this.password=password;
-        this.imagepath=imagepath;
     }
 
     public String getNickname() {
@@ -32,7 +39,4 @@ public class Equipment  extends DataSupport {
         return password;
     }
 
-    public String getImagepath() {
-        return imagepath;
-    }
 }

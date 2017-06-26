@@ -2,12 +2,10 @@ package com.siyann.taidaapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +13,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.p2p.core.P2PHandler;
+
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import adapter.EquipmentAdapter;
-import utils.LogUtil;
 import widget.Equipment;
 import widget.PopupMenu;
 
@@ -45,14 +46,17 @@ public class EquipmentActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private EquipmentAdapter adapter;
 
-
+    private LinearLayout lineequipmentList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_equipment);
-        mContext = EquipmentActivity.this;
+        mContext =this;
+
         mtextView = (TextView) findViewById(R.id.hint_view);
+
+        lineequipmentList= (LinearLayout) findViewById(R.id.equipment_list);
         /**
          * 设置数据
          */
@@ -67,6 +71,12 @@ public class EquipmentActivity extends AppCompatActivity {
         mImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /**
+                 * 结束时关闭
+                 */
+                P2PHandler.getInstance().p2pDisconnect();
+                Intent intent=new Intent(mContext,MainActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
@@ -120,24 +130,6 @@ public class EquipmentActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
-        SharedPreferences pref=getSharedPreferences("data", MODE_PRIVATE);
-        equipmentname=pref.getString("equipmentname", equipmentname);
-        equipmentid=pref.getString("equipmentid", equipmentid);
-        equipmentpwd=pref.getString("equipmentpwd",equipmentpwd);
-        if (!TextUtils.isEmpty(equipmentname)){
-            Equipment equipment1=new Equipment(equipmentname,equipmentid,equipmentpwd);
-            equipmentList.add(equipment1);
-            EquipmentAdapter adapter=new EquipmentAdapter(equipmentList);
-            recyclerView.setAdapter(adapter);
-            LogUtil.e("设备昵称", equipmentname);
-            LogUtil.e("设备ID", equipmentid);
-            LogUtil.e("设备密码", equipmentpwd);
-        }else {
-            mtextView.setVisibility(View.VISIBLE);      //如果没有设备提示添加
-        }
     }
 
     /**
@@ -149,9 +141,16 @@ public class EquipmentActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode==KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0){
+            /**
+             * 结束时关闭
+             */
+            P2PHandler.getInstance().p2pDisconnect();
+            Intent intent=new Intent(mContext,MainActivity.class);
+            startActivity(intent);
             finish();
+            return true;
         }
-        return true;
+        return super.onKeyDown(keyCode, event);
     }
 
 
@@ -173,7 +172,7 @@ public class EquipmentActivity extends AppCompatActivity {
         if (equipmentList == null || equipmentList.size() == 0) {
             lineequipmentList.setVisibility(View.VISIBLE);
         } else {
-            recyclerEquipment.setAdapter(adapter);
+            recyclerView.setAdapter(adapter);
             lineequipmentList.setVisibility(View.GONE);
         }
     }

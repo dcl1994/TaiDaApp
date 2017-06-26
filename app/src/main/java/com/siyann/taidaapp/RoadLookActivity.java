@@ -87,13 +87,16 @@ public class RoadLookActivity extends Activity {
         dialog.getProgressHelper().setBarColor(Color.parseColor("#4b9be0"));
         dialog.show();
 
+
+        initroadList();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         if (OkHttpUtil.isNetworkAvailable(mContext)){
-            doroad();
+//            doroad();
+
         }else {
             /**
              * 提示没有网络连接
@@ -109,6 +112,44 @@ public class RoadLookActivity extends Activity {
                         }
                     }).show();
         }
+    }
+
+
+    /**
+     * 填充数据
+     */
+    private void initroadList() {
+       Road road1=new Road("","时尚旺角小区北门口","http://111.30.78.162:89/live1/live1.m3u8","");
+       roadList.add(road1);
+
+        Road road2=new Road("","南海路二大街","http://111.30.78.162:89/live2/live2.m3u8","");
+        roadList.add(road2);
+
+        Road road3=new Road("","黄海路三大街","http://111.30.78.162:89/live3/live3.m3u8","");
+        roadList.add(road3);
+
+        Road road4=new Road("","北海路五大街","http://111.30.78.162:89/live4/live4.m3u8","");
+        roadList.add(road4);
+
+        Road road5=new Road("","南海路三大街","http://111.30.78.162:89/live5/live5.m3u8","");
+        roadList.add(road5);
+
+        Road road6=new Road("","黄海路二大街","http://111.30.78.162:89/live6/live6.m3u8","");
+        roadList.add(road6);
+
+
+        new CountDownTimer(600, 100) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+            @Override
+            public void onFinish() {
+                adapter=new RoadLookAdapter(mContext,roadList);
+                roadlookRecycle.setAdapter(adapter);
+                dialog.dismissWithAnimation();
+            }
+        }.start();
     }
 
     /**

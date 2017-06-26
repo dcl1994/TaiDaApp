@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/line_login"
     android:background="@drawable/images_login_bg">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -76,6 +77,5 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:background="@drawable/wxlogin_bg"
-        />
+        android:background="@drawable/wxlogin_bg"/>
 </LinearLayout>

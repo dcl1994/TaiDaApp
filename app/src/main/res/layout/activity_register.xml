@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/line_login"
     android:orientation="vertical"
-    android:background="@drawable/images_login_bg"
-    tools:context="com.siyann.taidaapp.RegisterActivity">
+    android:background="@drawable/images_login_bg">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,10 +17,6 @@
             android:background="@drawable/images_app_logo" />
     </RelativeLayout>
 
-    <ScrollView
-        android:id="@+id/register_form"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -133,7 +128,4 @@
                 android:layout_marginLeft="20dp"
                 android:text="@string/register"/>
         </RelativeLayout>
-
-    </ScrollView>
-
 </LinearLayout>
