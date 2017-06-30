@@ -105,7 +105,8 @@ public class RoadLookActivity extends Activity {
               dialog.setTitleText("提示")
                     .setContentText("网络连接错误，请检查网络连接")
                     .setConfirmText("确定")
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    .setCancelable(false);
+              dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             dialog.dismissWithAnimation();
@@ -136,7 +137,6 @@ public class RoadLookActivity extends Activity {
 
         Road road6=new Road("","黄海路二大街","http://111.30.78.162:89/live6/live6.m3u8","");
         roadList.add(road6);
-
 
         new CountDownTimer(600, 100) {
             @Override

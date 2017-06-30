@@ -141,7 +141,7 @@ public class EquipmentAdapter extends RecyclerView.Adapter<EquipmentAdapter.View
                  * 将ID存缓存
                  */
                 SharedPreferences.Editor editor=mContext.getSharedPreferences("equipment",Context.MODE_PRIVATE).edit();
-                editor.putString("equipid",equipid+"");
+                editor.putInt("equipid",equipid);
                 editor.putString("password",password);
                 editor.commit();
                 LogUtil.e("equipid", equipid + "");

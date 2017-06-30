@@ -27,6 +27,8 @@
     <color name="blue_main">#4b9be0</color>
     <color name="blue_bottom">#6cc4dc</color>
     <color name="yellow">#FFDECB83</color>
+    <color name="yellow_user">#FFCC33</color>
+
     <!-- 上传图片添加的颜色 -->
     <color name="none_color">#00000000</color>
     <color name="plugin_camera_black">#000000</color>

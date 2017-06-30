@@ -12,10 +12,10 @@ import com.siyann.taidaapp.ColorfulActivity;
 import com.siyann.taidaapp.CommunityNews;
 import com.siyann.taidaapp.CommunityProFileActivity;
 import com.siyann.taidaapp.CommunityTwitterActivity;
-import com.siyann.taidaapp.DetailsActivity;
 import com.siyann.taidaapp.FeedbackActivity;
 import com.siyann.taidaapp.R;
 import com.siyann.taidaapp.SurveyActivity;
+import com.siyann.taidaapp.UserInfoActivity;
 
 import java.util.List;
 
@@ -95,9 +95,7 @@ public class CommunityAdapter extends RecyclerView.Adapter<CommunityAdapter.View
                         view.getContext().startActivity(intent4);
                         break;
                     case 6:
-                        Intent intent5=new Intent(view.getContext(), DetailsActivity.class);
-                        intent5.putExtra("url", "http://www.tiptimes.com/home_td/index.php/Home/Index/personal.html");
-                        intent5.putExtra("title","个人中心");
+                        Intent intent5=new Intent(view.getContext(), UserInfoActivity.class);
                         view.getContext().startActivity(intent5);
                         break;
                 }

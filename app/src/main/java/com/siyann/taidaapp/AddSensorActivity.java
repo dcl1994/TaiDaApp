@@ -70,9 +70,9 @@ public class AddSensorActivity extends Activity implements View.OnClickListener{
      */
     @Override
     public void onClick(View v) {
-        SharedPreferences pref=getSharedPreferences("data", MODE_PRIVATE);
-        equipmentpwd=pref.getString("equipmentpwd",equipmentpwd);
-        equipmentid= pref.getString("equipmentid",equipmentid);
+        SharedPreferences pref=getSharedPreferences("equipment", MODE_PRIVATE);
+        equipmentid= pref.getInt("equipid",0)+"";
+        equipmentpwd=pref.getString("password","");
 
         LogUtil.e("equipmentpwd",equipmentpwd);
         LogUtil.e("equipmentid", equipmentid);
@@ -102,7 +102,8 @@ public class AddSensorActivity extends Activity implements View.OnClickListener{
         pdialog.setContentText("点击确定，触发将要添加的遥控器")
                 .setTitleText("")
                 .setConfirmText("确定")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                .setCancelable(false);
+        pdialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         //连接传感器
@@ -135,7 +136,8 @@ public class AddSensorActivity extends Activity implements View.OnClickListener{
         pdialog.setContentText("点击确定，触发将要添加的传感器")
                 .setTitleText("")
                 .setConfirmText("确定")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                .setCancelable(false);
+        pdialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         //连接传感器
@@ -164,7 +166,8 @@ public class AddSensorActivity extends Activity implements View.OnClickListener{
         pdialog.setContentText("点击确定，触发将要添加的传感器")
                 .setTitleText("")
                 .setConfirmText("确定")
-                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                .setCancelable(false);
+        pdialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         //连接传感器

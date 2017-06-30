@@ -4,19 +4,39 @@ package widget;
  *电视台的实体类
  */
 public class Program {
-    private String name;    //电视节目名称
-    private int imageId;    //图片的ID
+    private Integer IDN;    //ID
+    private String  Title;    //名称
+    private String Link;      //直播地址
+    private String litpic;    //台标
+    private String Updated;   //更新时间
 
-    public  Program(String name,int imageId){
-        this.name=name;
-        this.imageId=imageId;
+
+    public Program(Integer IDN,String Title,String Link,String litpic ,String Updated){
+        this.IDN=IDN;
+        this.Title=Title;
+        this.Link=Link;
+        this.litpic=litpic;
+        this.Updated=Updated;
     }
 
-    public String getName() {
-        return name;
+
+    public Integer getIDN() {
+        return IDN;
     }
 
-    public int getImageId() {
-        return imageId;
+    public String getTitle() {
+        return Title;
+    }
+
+    public String getLink() {
+        return Link;
+    }
+
+    public String getLitpic() {
+        return litpic;
+    }
+
+    public String getUpdated() {
+        return Updated;
     }
 }

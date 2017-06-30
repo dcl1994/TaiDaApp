@@ -27,6 +27,7 @@ import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,6 +50,7 @@ import utils.GlideImageLoader;
 import utils.ItemUtil;
 import utils.LogUtil;
 import utils.MyApplication;
+import utils.OkHttpUtil;
 import utils.P2PListener;
 import utils.SettingListener;
 import utils.Url;
@@ -90,30 +92,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     String data = ""; //日期
     String temperature = ""; //温度
     String info = "";    //天气
-
-
-    private String username = ""; //用户名
-
-    private String password = ""; //密码
-
-    SharedPreferences sharedPreferences;
-
     SweetAlertDialog pdialog;  //清新dialog
+
+    private String result="";
+
+
+    private String litpic="";       //轮播图的图片地址
+
+
+    private String Title="";        //轮播图片的标题
+
+    /**
+     * 本地图片数据（资源文件）
+     */
+    List<String> list = new ArrayList<>();
+
+    /**
+     * 标题
+     */
+    List<String> titlelist = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = MainActivity.this;
-
-
         init();
-
         /**
          * 将当前活动添加到list
          */
         ActivityCollector.addActivity(this);
-
 
         initUtilList(); //初始化数据
 
@@ -127,7 +135,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         ServiceAdapter adapter = new ServiceAdapter(itemUtilList);
         recyclerView.setAdapter(adapter);
     }
-
     /**
      * 初始化RecyclerView中的数据，填充相应内容
      */
@@ -202,28 +209,28 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         tv_img = (ImageView) findViewById(R.id.TV);
         tv_img.setOnClickListener(this);
         banner = (Banner) findViewById(R.id.banner);
-        /**
-         * 加载网络图片
-         */
-        //本地图片数据（资源文件）
-        List<String> list = new ArrayList<>();
-        list.add("http://39.108.82.55:8080/TendaEHome/upload/garousel/2.png");
-        list.add("http://39.108.82.55:8080/TendaEHome/upload/garousel/3.jpg");
-        /**
-         * 标题
-         */
-        List<String> titlelist = new ArrayList<>();
-        titlelist.add("");
-        titlelist.add("");
 
-        banner.setImages(list)
-                .setImageLoader(new GlideImageLoader())
-                .setDelayTime(2500)
-                .setBannerStyle(BannerConfig.NUM_INDICATOR_TITLE)
-                .setBannerTitles(titlelist)
-                        //设置标题集合（当banner样式有显示title时）
-                .setBannerAnimation(Transformer.DepthPage)
-                .start();
+
+
+        if (OkHttpUtil.isNetworkAvailable(mContext)){
+            //获取轮播图
+            getbanner();
+        }else {
+            /**
+             * 提示没有网络连接
+             */
+            pdialog = new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE);
+            pdialog.setTitleText("提示")
+                    .setContentText("网络连接错误，请检查网络连接")
+                    .setConfirmText("确定")
+                    .setCancelable(false);
+            pdialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                    pdialog.dismissWithAnimation();
+                }
+            }).show();
+        }
 
         myuser_img = (ImageView) findViewById(R.id.user_img);
         myuser_img.setOnClickListener(this);
@@ -272,24 +279,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 pdialog.setTitleText("确定退出吗？")
                                         .setContentText("退出之后再次进入需要重新登录")
                                         .setConfirmText("确定")
-                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                            @Override
-                                            public void onClick(SweetAlertDialog dialog) {
-                                                cleanSharedPreference(mContext);
+                                        .setCancelable(false);
+                                pdialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog dialog) {
+                                        cleanSharedPreference(mContext);
 
-                                                ActivityCollector.finishAll();
+//                                                mDrawerLayout.closeDrawers();
+                                        /**
+                                         * 退出程序调用disconnect
+                                         */
+                                        //p2pconnect方法在APP一次生命周期中只需调用一次,退出后台结束时配对调用disconnect一次
+                                        P2PHandler.getInstance().p2pDisconnect();
+                                        ActivityCollector.finishAll();
 
-                                                android.os.Process.killProcess(android.os.Process.myPid());
-                                                mDrawerLayout.closeDrawers();
 
-                                                /**
-                                                 * 退出程序调用disconnect
-                                                 */
-                                                //p2pconnect方法在APP一次生命周期中只需调用一次,退出后台结束时配对调用disconnect一次
-                                                P2PHandler.getInstance().p2pDisconnect();
-
-                                            }
-                                        })
+                                    }
+                                })
                                         .setCancelText("取消")
                                         .show();
                                 break;
@@ -421,7 +427,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Toast.makeText(MyApplication.app, "视频监控出现了未知的错误，请稍后重试" + error_code, Toast.LENGTH_LONG).show();
             }
         };
-        HttpSend.getInstance().login("86-13148700419","123456",subscriberListener);
+        HttpSend.getInstance().login("86-13148700419", "123456", subscriberListener);
     }
 
 
@@ -479,13 +485,71 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         //获取天气查询显示在headView中
         getWeather();
-
-//        /**
-//         * 结束时关闭
-//         */
-//        P2PHandler.getInstance().p2pDisconnect();
     }
 
+
+    /**
+     * 获取轮播图
+     */
+    private void getbanner() {
+        OkHttpUtil.sendOkHttpRequest(Url.GetBanner, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LogUtil.e("e",e+"");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                result=response.body().string();
+                result=result.replace("<string xmlns=\"http://tempuri.org/\">", "")
+                        .replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "")
+                        .replace("</string>", "");
+                JSONObject jsonObject=null;
+                try {
+                    jsonObject=new JSONObject(result);
+                    final boolean ok=jsonObject.getBoolean("ok");
+
+                    if (ok==true){
+                        JSONArray jsonArray=jsonObject.getJSONArray("ds");
+                        LogUtil.e("jsonArray", jsonArray + "");
+                        for (int i=0;i<jsonArray.length();i++){
+                            JSONObject jsonObject1= (JSONObject) jsonArray.get(i);
+
+                            litpic="http://121.42.32.107:8001/images/"+jsonObject1.getString("litpic").replace("/_data/images/","");
+                            LogUtil.e("litpic", litpic);
+
+                            Title=jsonObject1.getString("Title");
+                            LogUtil.e("Title",Title);
+                            /**
+                             * 将图片添加进去
+                             */
+                            list.add(litpic);
+                            /**
+                             * 将标题添加进去
+                             */
+                            titlelist.add(Title);
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                banner.setImages(list)
+                                        .setImageLoader(new GlideImageLoader())
+                                        .setDelayTime(2500)
+                                        .setBannerStyle(BannerConfig.NUM_INDICATOR_TITLE)
+                                        .setBannerTitles(titlelist)
+                                                //设置标题集合（当banner样式有显示title时）
+                                        .setBannerAnimation(Transformer.DepthPage)
+                                        .start();
+                            }
+                        });
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
     /**
      * 发送一个get请求获取天气情况
      */

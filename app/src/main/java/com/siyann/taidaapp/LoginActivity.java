@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Process;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -40,6 +38,8 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import utils.ActivityCollector;
+import utils.BaseActivity;
 import utils.LogUtil;
 import utils.OkHttpUtil;
 import utils.Url;
@@ -48,7 +48,7 @@ import utils.Url;
  * 泰达的登录界面
  * 实现一次登录就不用再登录了
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
     @Bind(R.id.usernameWrapper)
     TextInputLayout usernameWrapper;
     @Bind(R.id.passwordWrapper)
@@ -82,6 +82,10 @@ public class LoginActivity extends AppCompatActivity {
         mContext = LoginActivity.this;
 
         addLayoutListener(lineLogin,login);
+
+
+        ActivityCollector.addActivity(this);
+
 
     }
 
@@ -162,11 +166,17 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    //重写返回键时要记得过滤点击事件
+    /**
+     * 重写返回键
+     * @param keyCode
+     * @param event
+     * @return
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Process.killProcess(Process.myPid());
+        if (keyCode == KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0) {
+            ActivityCollector.finishAll();
+           return true;
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -357,7 +367,8 @@ public class LoginActivity extends AppCompatActivity {
                                 pdialog.setTitleText("登录失败")
                                         .setContentText(msg)
                                         .setConfirmText("确定")
-                                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                        .setCancelable(false);
+                                        pdialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                             @Override
                                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                                 mProBar.setVisibility(View.GONE);

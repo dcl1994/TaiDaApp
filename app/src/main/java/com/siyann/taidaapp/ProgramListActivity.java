@@ -2,18 +2,36 @@ package com.siyann.taidaapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import adapter.ProgramAdapter;
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
+import utils.LogUtil;
+import utils.OkHttpUtil;
+import utils.Url;
 import widget.Program;
 
 /**
@@ -24,29 +42,38 @@ public class ProgramListActivity extends AppCompatActivity implements View.OnCli
     private Context mContext;
     private ImageView back;
     private TextView mtitleview;
+    private SweetAlertDialog dialog;
+    private String result="";
 
+    JSONObject jsonObject=null;
+    JSONArray jsonArray=null;
+
+    private ProgramAdapter adapter;
+
+    RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_program_list);
         mContext=ProgramListActivity.this;
         init();
-        initPrograms();
 
-        RecyclerView recyclerView= (RecyclerView) findViewById(R.id.tvrecycler_view);
+        recyclerView= (RecyclerView) findViewById(R.id.tvrecycler_view);
         LinearLayoutManager manager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
 
-        ProgramAdapter adapter=new ProgramAdapter(programList);
-        recyclerView.setAdapter(adapter);
+        /**
+         * 一进来就显示dialog
+         */
+        dialog=new SweetAlertDialog(mContext,SweetAlertDialog.PROGRESS_TYPE)
+                .setTitleText("Loading....");
+        dialog .getProgressHelper().setBarColor(Color.parseColor("#4b9be0"));
+        dialog.show();
     }
-
-
     /**
      * 初始化ui
      */
     private void init() {
-
         /**
          * 设置标题
          */
@@ -54,47 +81,106 @@ public class ProgramListActivity extends AppCompatActivity implements View.OnCli
         mtitleview= (TextView) findViewById(R.id.title_view);
         mtitleview.setText(intent.getStringExtra("title"));
 
-
         back= (ImageView) findViewById(R.id.back);
         back.setOnClickListener(this);
+    }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
+       if (OkHttpUtil.isNetworkAvailable(mContext)){
+            getprograms();
+        }else {
+           /**
+            * 提示没有网络连接
+            */
+           dialog = new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE);
+           dialog.setTitleText("提示")
+                   .setContentText("网络连接错误，请检查网络连接")
+                   .setConfirmText("确定")
+                   .setCancelable(false);
+           dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+               @Override
+               public void onClick(SweetAlertDialog sweetAlertDialog) {
+                   dialog.dismissWithAnimation();
+               }
+           }).show();
+       }
 
     }
 
     /**
-     * 初始化电视节目数据
+     * 获取直播
      */
-    private void initPrograms() {
-        Program fenghuang=new Program("凤凰卫视",R.drawable.fenghuang);
-        programList.add(fenghuang);
+    private void getprograms() {
 
-        Program gansu=new Program("江苏电视台",R.drawable.gansu);
-        programList.add(gansu);
+        OkHttpUtil.sendOkHttpRequest(Url.TVlive, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LogUtil.e("e",e+"");
+            }
 
-        Program heilongjiang=new Program("黑龙江电视台",R.drawable.heilongjiang);
-        programList.add(heilongjiang);
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                result=response.body().string();
+                result=result.replace("<string xmlns=\"http://tempuri.org/\">", "")
+                        .replace("</string>", "")
+                        .replace("<?xml version=\"1.0\" encoding=\"utf-8\"?>", "");
+                LogUtil.e("result",result);
 
-        Program hunan=new Program("湖南电视台",R.drawable.hunan);
-        programList.add(hunan);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            jsonObject = new JSONObject(result);
+                            final Boolean flag = jsonObject.getBoolean("ok");
+                            jsonArray = jsonObject.getJSONArray("ds");
+                            LogUtil.e("jsonArray", jsonArray + "");
+                            if (flag == true) {
+                                /**
+                                 * 使用Gson解析来遍历jsonArray数组
+                                 */
+                                LogUtil.e("flag",flag+"");
+                                Gson gson = new Gson();
+                                programList = gson.fromJson(jsonArray + "", new TypeToken<List<Program>>() {
+                                }.getType());
 
-
-        Program jiangxi=new Program("江西电视台",R.drawable.jiangxi);
-        programList.add(jiangxi);
-
-        Program lvyou=new Program("旅游卫视",R.drawable.lvyou);
-        programList.add(lvyou);
-
-        Program nantong=new Program("南通电视台",R.drawable.nantong);
-        programList.add(nantong);
-
-
-        Program suzhou=new Program("苏州电视台",R.drawable.suzhou);
-        programList.add(suzhou);
-
-        Program zhejiang=new Program("浙江电视台",R.drawable.zhejiang);
-        programList.add(zhejiang);
+                                for (Program program:programList){
+                                    LogUtil.e("Title",program.getTitle());
+                                    LogUtil.e("Link",program.getLink());
+                                    LogUtil.e("litpic",program.getLitpic());
+                                }
+                                adapter=new ProgramAdapter(mContext,programList);
+                                recyclerView.setAdapter(adapter);
+                                /**
+                                 * dialog过一秒隐藏
+                                 */
+                                new CountDownTimer(600, 100) {
+                                    @Override
+                                    public void onTick(long millisUntilFinished) {
+                                    }
+                                    @Override
+                                    public void onFinish() {
+                                        /**
+                                         * 隐藏dialog
+                                         */
+                                        dialog.dismissWithAnimation();
+                                    }
+                                }.start();
+                            } else {
+                                Toast.makeText(mContext, "获取数据失败", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
     }
-
 
     /**
      * 点击事件

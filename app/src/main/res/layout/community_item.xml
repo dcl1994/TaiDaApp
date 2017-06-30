@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="20dp"
     android:id="@+id/community_line"
     android:background="@drawable/radius_drawable_bg">
     <TextView
@@ -14,13 +14,25 @@
         android:textStyle="bold"
         android:text="1231"
         android:textColor="@color/blackmin"
-        android:layout_margin="10dp"/>
+        android:layout_margin="15dp"/>
+
+    <TextView
+        android:id="@+id/text_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:text="123123"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"/>
 
     <ImageView
         android:id="@+id/content_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:layout_width="350dp"
+        android:layout_height="180dp"
+        android:visibility="gone"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_gravity="center_horizontal"/>
 
     <TextView
         android:id="@+id/community_introduction"

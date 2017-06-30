@@ -115,7 +115,6 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
 
     public  static boolean linesuccess=false; // 连接设备成功
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -125,7 +124,6 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         initUI();
         getScreenWithHeigh();
         regFilter();
-
         CallOnClick();  //连接设备
     }
 
@@ -140,7 +138,6 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
     }
 
     private void init() {
-
         /**
          * 底部栏的静音键
          */
@@ -225,8 +222,9 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
             equipmentNickname=intent.getStringExtra("nickname");
             equipmentid = intent.getStringExtra("id");
             equipmentpwd = intent.getStringExtra("pwd");
-            LogUtil.e("Oncreateid", ""+equipmentid);
-            LogUtil.e("Oncreatepwd", equipmentpwd);
+
+            LogUtil.e("Oncreateid",equipmentid);
+            LogUtil.e("Oncreatepwd",equipmentpwd);
             LogUtil.e("nickname",equipmentNickname);
         }
     }
@@ -386,13 +384,13 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         SharedPreferences pref=getSharedPreferences("data", MODE_PRIVATE);
         LoginID = pref.getString("LoginID", "");
         LogUtil.e("LoginID", LoginID);
+
+
         String pwd = P2PHandler.getInstance().EntryPassword(equipmentpwd);//经过转换后的设备密码
         LogUtil.e("pwd",pwd);
         LogUtil.e("equipmentid",""+equipmentid);
         P2PHandler.getInstance().call(LoginID, pwd, true, 1, equipmentid, "", "", 2, equipmentid);
     }
-
-
 
     /**
      * 点击事件
@@ -409,9 +407,11 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
                      */
                     ScreenShotClock();
                     P2PHandler.getInstance().reject();
+                    Toast.makeText(mContext, "挂断", Toast.LENGTH_SHORT).show();
                     finish();
                 }else {
                     P2PHandler.getInstance().reject();
+                    Toast.makeText(mContext, "挂断", Toast.LENGTH_SHORT).show();
                     finish();
                 }
                 break;
@@ -591,13 +591,13 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
         AudioManager manager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         if (manager != null) {
             if (isMute) {
-                manager.setStreamVolume(AudioManager.STREAM_MUSIC, manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-                volume.setImageResource(R.drawable.selector_half_screen_voice_open);
-                close_voice.setImageResource(R.drawable.m_voice_on);
-            } else {
                 manager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
                 volume.setImageResource(R.drawable.selector_half_screen_voice_close);
                 close_voice.setImageResource(R.drawable.m_voice_off);
+            } else {
+                manager.setStreamVolume(AudioManager.STREAM_MUSIC, manager.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+                volume.setImageResource(R.drawable.selector_half_screen_voice_open);
+                close_voice.setImageResource(R.drawable.m_voice_on);
             }
         }
     }
@@ -656,7 +656,9 @@ public class MonitoerActivity extends BaseMonitorActivity implements View.OnClic
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode==KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0){
-
+            ScreenShotClock();
+            P2PHandler.getInstance().reject();
+            Toast.makeText(mContext, "挂断", Toast.LENGTH_SHORT).show();
             finish();
         }
         return super.onKeyDown(keyCode, event);

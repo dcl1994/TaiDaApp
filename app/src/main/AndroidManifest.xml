@@ -30,7 +30,6 @@
     <!-- 硬件加速对X5视频播放非常重要，建议开启 -->
     <uses-permission android:name="android.permission.GET_TASKS" />
 
-
     <application
         android:name="utils.MyApplication"
         android:allowBackup="true"
@@ -40,15 +39,16 @@
         android:theme="@style/AppTheme.NoActionBar"
         tools:replace="android:icon, android:theme">
 
-        <!--腾讯的浏览器内核-->
+        <!-- 腾讯的浏览器内核 -->
         <activity
             android:name="com.tencent.smtt.sdk.VideoActivity"
+            android:alwaysRetainTaskState="true"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:exported="false"
-            android:launchMode="singleTask"
-            android:alwaysRetainTaskState="true">
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.tencent.smtt.tbs.video.PLAY" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -111,7 +111,6 @@
         <activity android:name=".AddUsernameActivity" />
         <activity android:name=".AddPhoneActivity" />
         <activity android:name=".AddAddressActivity" />
-        <activity android:name=".TestActivity" />
 
         <!-- 在application中注册activity -->
         <!-- Mob短信（如果使用无GUI的，这个activity应该可以不需要了，自己没试过，就先在这注册着吧） -->
@@ -133,7 +132,9 @@
         <activity android:name=".SmallKnowledgeActivity" />
         <activity android:name=".CookingCultureActivity" />
         <activity android:name=".RoadLookActivity" />
-        <activity android:name=".RoadLookTvActivity"></activity>
+        <activity android:name=".AlarmInfoActivity" />
+        <activity android:name=".UserInfoActivity" />
+        <activity android:name=".UserDetailActivity"></activity>
     </application>
 
 </manifest>

@@ -48,6 +48,10 @@
 
     <string name="hint">没有设备请添加</string>
 
-
-
+    <string name="wx_name">微信用户</string>
+    <string name="contactphone">联系电话</string>
+    <string name="community">小区名称</string>
+    <string name="shippingaddress">默认送货地址</string>
+    <string name="contact">联系人</string>
+    <string name="phone">电话</string>
 </resources>

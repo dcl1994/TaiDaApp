@@ -3,16 +3,19 @@ package com.siyann.taidaapp;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.hwangjr.rxbus.annotation.Subscribe;
+import com.hwangjr.rxbus.annotation.Tag;
 import com.p2p.core.P2PHandler;
 
 import org.litepal.crud.DataSupport;
@@ -21,25 +24,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapter.EquipmentAdapter;
+import entity.AlarmImageInfo;
+import entity.AlarmInfo;
+import utils.LogUtil;
+import utils.RxBUSAction;
 import widget.Equipment;
 import widget.PopupMenu;
 
 /**
  * 设备列表界面
  */
-public class EquipmentActivity extends AppCompatActivity {
+public class EquipmentActivity extends BaseAlarmActivity {
     private Context mContext;
     private ImageView mImageView;   //返回按钮
     private LinearLayout toopbar_layout;    //添加设备
     private PopupMenu mPopupMenu;
     private List<Equipment> equipmentList = new ArrayList<>();
-
-    private String returnedData = "";
-
-    private String equipmentname = "";    //设备昵称
-    private String equipmentid = "";      //设备ID
-    private String equipmentpwd = "";         //设备密码
-
 
     private TextView mtextView; //提示信息
 
@@ -47,6 +47,13 @@ public class EquipmentActivity extends AppCompatActivity {
     private EquipmentAdapter adapter;
 
     private LinearLayout lineequipmentList;
+
+    private AlarmInfo info;
+    private AlarmImageInfo ImageInfo;
+
+    private String pwd="";
+    private String name="";
+    private String id="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +139,59 @@ public class EquipmentActivity extends AppCompatActivity {
         });
     }
 
+    @Subscribe(
+            tags = {
+                    @Tag(RxBUSAction.EVENT_ALARM)
+            }
+    )
+    /**
+     * 获取报警信息
+     * 如果报警就跳转到报警界面打开声音显示
+     */
+    public void initUI(AlarmInfo info){
+        this.info=info;
+        LogUtil.e("alarmid", info.getSrcId());
+        LogUtil.e("contentinfo",info.toString());
+        id=info.toString();
+        /**
+         * 根据设备ID获取设备连接密码
+         * 然后将获取到的设备ID和密码传给Alarminfoactivity界面
+         */
+        List<Equipment> equipments=DataSupport.where("equipid=?",info.getSrcId()).find(Equipment.class);
+        for (Equipment equipment:equipments){
+            pwd=equipment.getPassword();
+            name=equipment.getNickname();
+            LogUtil.e("pwd",equipment.getPassword());
+            LogUtil.e("name", name);
+        }
+        if (!TextUtils.isEmpty(info.getSrcId())){
+            Intent intent=new Intent(mContext,AlarmInfoActivity.class);
+            intent.putExtra("name",name);
+            intent.putExtra("id",id);
+            intent.putExtra("pwd", pwd);
+            startActivity(intent);
+        }
+    }
+
+    @Subscribe(
+            tags = {
+                    @Tag(RxBUSAction.EVENT_RET_ALARMIMAGE)
+            }
+    )
+    public void GetAlarmImageInfo(AlarmImageInfo info) {
+        this.ImageInfo=info;
+        LogUtil.e("dxsTest", "GetAlarmImageInfo:" + info.toString());
+        if(info.getErrorCode()==0){
+            if(ImageInfo!=null&& !TextUtils.isEmpty(ImageInfo.getPath())){
+//                Glide.with(mContext).load(ImageInfo.getPath()).into(ivAlarmpicture);
+            }else{
+//                Glide.with(mContext).load(getLocalImagePath()).into(ivAlarmpicture);
+            }
+        }else{
+            Toast.makeText(mContext, info.getErrorCode() + "", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      * 重写返回键
      * @param keyCode
@@ -145,8 +205,6 @@ public class EquipmentActivity extends AppCompatActivity {
              * 结束时关闭
              */
             P2PHandler.getInstance().p2pDisconnect();
-            Intent intent=new Intent(mContext,MainActivity.class);
-            startActivity(intent);
             finish();
             return true;
         }

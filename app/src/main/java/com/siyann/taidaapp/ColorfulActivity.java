@@ -103,7 +103,8 @@ public class ColorfulActivity extends Activity {
             dialog.setTitleText("提示")
                     .setContentText("网络连接错误，请检查网络连接")
                     .setConfirmText("确定")
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    .setCancelable(false);
+                    dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
                             dialog.dismissWithAnimation();

@@ -19,7 +19,7 @@
             <ImageView
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:background="@drawable/user"
+                android:background="@drawable/my"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="3dp"/>
             <View

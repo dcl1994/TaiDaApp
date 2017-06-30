@@ -24,6 +24,7 @@ public class AlarmActivity extends Activity implements View.OnClickListener {
     private TextView mtextView;
     private ImageView mimageView;
     private RelativeLayout alarmemail_rel;  //报警邮箱
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,11 +45,11 @@ public class AlarmActivity extends Activity implements View.OnClickListener {
         /**
          * 从缓存中获取设备ID和密码
          */
-        SharedPreferences pref=getSharedPreferences("data", MODE_PRIVATE);
-        final String equipmentid=pref.getString("equipmentid", "");
-        LogUtil.e("equipmentid",equipmentid);
-        final String equipmentpwd=pref.getString("equipmentpwd","");
-        LogUtil.e("equipmentpwd",equipmentpwd);
+        SharedPreferences pref=getSharedPreferences("equipment", MODE_PRIVATE);
+        final String equipmentid=pref.getInt("equipid",0)+"";
+        LogUtil.e("equipid",equipmentid);
+         final String equipmentpwd=pref.getString("password","");
+        LogUtil.e("password",equipmentpwd);
 
         /**
          * 设置蜂鸣器

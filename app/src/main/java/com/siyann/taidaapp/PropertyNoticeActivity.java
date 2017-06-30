@@ -86,6 +86,7 @@ public class PropertyNoticeActivity extends Activity {
          */
         dialog=new SweetAlertDialog(mContext,SweetAlertDialog.PROGRESS_TYPE)
                 .setTitleText("Loading....");
+        dialog.setCancelable(false);
         dialog .getProgressHelper().setBarColor(Color.parseColor("#4b9be0"));
         dialog.show();
 
@@ -94,10 +95,20 @@ public class PropertyNoticeActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-
         if (OkHttpUtil.isNetworkAvailable(mContext)){
-
             dopropertynotice();
+        }else {
+            final SweetAlertDialog dialog = new SweetAlertDialog(mContext, SweetAlertDialog.WARNING_TYPE);
+            dialog.setTitleText("提示")
+                    .setContentText("网络连接错误，请检查网络连接")
+                    .setConfirmText("确定")
+                    .setCancelable(false);
+            dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            dialog.dismissWithAnimation();
+                        }
+                    }).show();
         }
     }
 

@@ -35,6 +35,7 @@ public class CommunityNewsAdapter  extends RecyclerView.Adapter<CommunityNewsAda
         private ImageView content_img;
         private View communityview;
         private LinearLayout mylinearlayout;
+        private TextView texttime;
         public ViewHolder(View view) {
             super(view);
             communityview=view;
@@ -42,6 +43,7 @@ public class CommunityNewsAdapter  extends RecyclerView.Adapter<CommunityNewsAda
             introduction= (TextView) view.findViewById(R.id.community_introduction);
             content_img= (ImageView) view.findViewById(R.id.content_img);
             mylinearlayout= (LinearLayout) view.findViewById(R.id.community_line);
+            texttime= (TextView) view.findViewById(R.id.text_time);
         }
     }
 
@@ -95,8 +97,8 @@ public class CommunityNewsAdapter  extends RecyclerView.Adapter<CommunityNewsAda
 
      holder.content_img.setVisibility(View.VISIBLE);
      holder.title.setText(community.getTitle());
-     holder.introduction.setText(community.getIntroduction());
-
+        holder.introduction.setText(community.getIntroduction());
+        holder.texttime.setText(community.getUpdated());
         /**
          *替换原有的图片
          */
@@ -107,7 +109,6 @@ public class CommunityNewsAdapter  extends RecyclerView.Adapter<CommunityNewsAda
              .placeholder(R.drawable.plugin_pictures)
              .into(holder.content_img);
     }
-
     @Override
     public int getItemCount() {
         return mcommunityList.size();

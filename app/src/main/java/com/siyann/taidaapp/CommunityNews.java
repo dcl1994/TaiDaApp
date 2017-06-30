@@ -86,14 +86,7 @@ public class CommunityNews extends Activity {
                 .setTitleText("Loading....");
         dialog .getProgressHelper().setBarColor(Color.parseColor("#4b9be0"));
         dialog.show();
-    }
 
-    /**
-     *
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         if (OkHttpUtil.isNetworkAvailable(mContext)){
 
@@ -106,13 +99,22 @@ public class CommunityNews extends Activity {
             dialog.setTitleText("提示")
                     .setContentText("网络连接错误，请检查网络连接")
                     .setConfirmText("确定")
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            dialog.dismissWithAnimation();
-                        }
-                    }).show();
+                    .setCancelable(false);
+            dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                @Override
+                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                    dialog.dismissWithAnimation();
+                }
+            }).show();
         }
+    }
+
+    /**
+     *
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     /**
