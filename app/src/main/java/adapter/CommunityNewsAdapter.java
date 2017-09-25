@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.siyann.taidaapp.CommunityDetailActivity;
 import com.siyann.taidaapp.R;
 
@@ -104,9 +105,13 @@ public class CommunityNewsAdapter  extends RecyclerView.Adapter<CommunityNewsAda
          */
      String imagepath=community.getLitpic();
      imagepath="http://121.42.32.107:8001/images/"+imagepath.replace("/_data/images/","");
+
+        LogUtil.e("imagepath",imagepath);
+
      Glide.with(mContext)
              .load(imagepath)
              .placeholder(R.drawable.plugin_pictures)
+             .diskCacheStrategy(DiskCacheStrategy.NONE)
              .into(holder.content_img);
     }
     @Override

@@ -171,6 +171,7 @@ public class CommunityNews extends Activity {
                                              * 隐藏dialog
                                              */
                                             dialog.dismissWithAnimation();
+
                                         }
                                     }.start();
                                 } else {

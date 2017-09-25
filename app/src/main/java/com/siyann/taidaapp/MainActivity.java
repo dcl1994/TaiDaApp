@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -215,7 +216,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (OkHttpUtil.isNetworkAvailable(mContext)){
             //获取轮播图
             getbanner();
-        }else {
+        }
+        else {
             /**
              * 提示没有网络连接
              */
@@ -255,8 +257,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     public boolean onNavigationItemSelected(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.nav_findpwd:
-                                Intent intent1 = new Intent(mContext, FindPassword.class);
-                                intent1.putExtra("title", "找回密码");
+                                Intent intent1 = new Intent(mContext, ChangePassword.class);
+                                intent1.putExtra("tag",1+"");
                                 startActivity(intent1);
                                 mDrawerLayout.closeDrawers();
                                 break;
@@ -289,8 +291,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                         /**
                                          * 退出程序调用disconnect
                                          */
-                                        //p2pconnect方法在APP一次生命周期中只需调用一次,退出后台结束时配对调用disconnect一次
-                                        P2PHandler.getInstance().p2pDisconnect();
+                                        android.os.Process.killProcess(android.os.Process.myPid());
                                         ActivityCollector.finishAll();
 
 
@@ -327,6 +328,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Intent intent1 = new Intent(mContext, TvLiveActivity.class);
                 intent1.putExtra("title", "直播界面");
                 startActivity(intent1);
+                Snackbar.make(v,"暂未开通",Snackbar.LENGTH_SHORT).setAction("确认", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                    }
+                }).show();
                 break;
             case R.id.service_customers:    //便民服务
                 service_text.setTextColor(ContextCompat.getColor(this, R.color.blue_main));
@@ -561,7 +567,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         //3.将Request封装为Call
         executeRequest(request);
         LogUtil.v("sms", "发送get请求");
-
     }
 
     private void executeRequest(Request request) {
@@ -686,6 +691,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ActivityCollector.removeActivity(this);
+        ActivityCollector.finishAll();
     }
 }

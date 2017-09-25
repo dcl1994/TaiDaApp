@@ -10,71 +10,68 @@
 
 
     <RelativeLayout
+        android:id="@+id/addsensor"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
-        android:background="@color/white">
+        android:background="@drawable/linearlayout_bg">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="传感器"
+            android:text="@string/addsensor"
             android:textSize="16sp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"/>
         <ImageView
-            android:id="@+id/addsensor"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/addequipment_bg"
+            android:background="@drawable/add"
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
             android:layout_centerVertical="true"/>
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/remotecontrol"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
-        android:background="@color/white">
+        android:background="@drawable/linearlayout_bg">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="遥控"
+            android:text="@string/control"
             android:textSize="16sp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"/>
         <ImageView
-            android:id="@+id/remotecontrol"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/addequipment_bg"
+            android:background="@drawable/add"
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
             android:layout_centerVertical="true"/>
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/specialsensor"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
-        android:background="@color/white">
+        android:background="@drawable/linearlayout_bg">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="特殊传感器"
+            android:text="@string/specialsensor"
             android:textSize="16sp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"/>
         <ImageView
-            android:id="@+id/specialsensor"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/addequipment_bg"
+            android:background="@drawable/add"
             android:layout_alignParentRight="true"
             android:layout_marginRight="15dp"
             android:layout_centerVertical="true"/>
     </RelativeLayout>
-
-
-
 </LinearLayout>

@@ -54,4 +54,10 @@
     <string name="shippingaddress">默认送货地址</string>
     <string name="contact">联系人</string>
     <string name="phone">电话</string>
+
+    <string name="userinfo">个人中心</string>
+
+    <string name="addsensor">传感器</string>
+    <string name="control">遥控</string>
+    <string name="specialsensor">特殊传感器</string>
 </resources>

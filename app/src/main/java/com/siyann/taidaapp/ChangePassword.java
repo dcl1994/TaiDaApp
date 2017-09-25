@@ -49,6 +49,8 @@ public class ChangePassword extends Activity {
     private String username = "";//电话号码
     private String uid = "";      //userID
 
+    private String TAG="";  //标识
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,17 +58,31 @@ public class ChangePassword extends Activity {
         ButterKnife.bind(this);
         mContext = ChangePassword.this;
 
+        Intent intent=getIntent();
+        TAG=intent.getStringExtra("tag");
         /**
-         * 获取缓存中的电话和ID
+         * 这里需要判断一下是从首页面直接进来的还是从忘记密码页面进来的
+         * 0：表示从忘记密码页面进来的
+         * 1：表示从主界面进来的
          */
-        SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
-        username = pref.getString("username", "");
-        uid = pref.getString("id", "");
-
-        LogUtil.e("username", username);
-        LogUtil.e("uid", uid);
-
-
+        if (TAG.equals("1")){
+            /**
+             * 获取缓存中的电话和ID
+             */
+            SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
+            username = pref.getString("username", "");
+            uid = pref.getString("id", "");
+            LogUtil.e("sh_username",username);
+            LogUtil.e("sh_uid",uid);
+        }else {
+            /**
+             * 获取传递过来的电话和ID
+             */
+            username=intent.getStringExtra("username");
+            uid=intent.getStringExtra("userid");
+            LogUtil.e("username", username);
+            LogUtil.e("userid", uid);
+        }
         addLayoutListener(lineLogin,changepwdBtn);
     }
 

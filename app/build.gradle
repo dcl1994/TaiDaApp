@@ -21,7 +21,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -93,7 +93,6 @@ dependencies {
      *           Navigation定制布局，导入依赖
      */
     compile 'com.android.support:design:24.2.1'
-    compile 'de.hdodenhof:circleimageview:2.1.0'
     /**
      *           添加RecyclerView依赖
      */
@@ -102,8 +101,6 @@ dependencies {
      *           图片轮播依赖
      */
     compile 'com.youth.banner:banner:1.4.9'
-    //最新版本
-
     /**
      *           Glide加载图片
      */
@@ -120,7 +117,6 @@ dependencies {
      *           微信登录所需的依赖
      */
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:1.1.6'
-    compile files('libs/volley.jar')
     /**
      *           高德地图
      */
@@ -144,17 +140,14 @@ dependencies {
      *   配置litePar开源库
      */
     compile 'org.litepal.android:core:1.3.2'
-
     /**
      * QQ浏览器
      */
     compile files('libs/tbs_sdk_thirdapp_v3.1.0.1034_43100_sharewithdownload_obfs_20170301_182143.jar')
-
     /**
-    *  圆形用户头像的依赖
-    */
+     *  圆形用户头像的依赖
+     */
     compile 'de.hdodenhof:circleimageview:2.1.0'
-
 }
 
 

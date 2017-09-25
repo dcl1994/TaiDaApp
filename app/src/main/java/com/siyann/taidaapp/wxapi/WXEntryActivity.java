@@ -79,9 +79,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         SharedPreferences preferences=getSharedPreferences("msg",MODE_PRIVATE);
         msg=preferences.getString("msg","");
         LogUtil.e("msg",msg);
-
-
-
     }
     @Override
     protected void onNewIntent(Intent intent) {
@@ -213,7 +210,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
         //3.将Request封装为Call
         executeRequestUser(request);
         LogUtil.v("sms", "发送get请求");
-
     }
     private void executeRequestUser(Request request) {
         Call call=new OkHttpClient().newCall(request);
@@ -283,8 +279,6 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 //
 //                                }
                             dologin();
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

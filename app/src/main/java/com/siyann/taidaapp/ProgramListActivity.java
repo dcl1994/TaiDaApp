@@ -29,6 +29,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import utils.ActivityCollector;
 import utils.LogUtil;
 import utils.OkHttpUtil;
 import utils.Url;
@@ -57,6 +58,9 @@ public class ProgramListActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_program_list);
         mContext=ProgramListActivity.this;
         init();
+
+        ActivityCollector.addActivity(this);
+
 
         recyclerView= (RecyclerView) findViewById(R.id.tvrecycler_view);
         LinearLayoutManager manager=new LinearLayoutManager(this);
@@ -105,6 +109,7 @@ public class ProgramListActivity extends AppCompatActivity implements View.OnCli
            dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                @Override
                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                   ActivityCollector.finishAll();
                    dialog.dismissWithAnimation();
                }
            }).show();

@@ -3,7 +3,6 @@ package com.siyann.taidaapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,13 +16,25 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import utils.LogUtil;
 import utils.MyApplication;
+import utils.OkHttpUtil;
+import utils.Url;
 
 /**
  * 找回密码界面
@@ -46,7 +57,7 @@ public class FindPassword extends Activity {
     private int i = 30; //30秒后重新发送
     private String phone = "";
     private String code = ""; //验证码
-
+    String userid="";     //用户id
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +66,7 @@ public class FindPassword extends Activity {
         mContext = FindPassword.this;
         init();
 
-        addLayoutListener(lineLogin,findpwdBtn);
+        addLayoutListener(lineLogin, findpwdBtn);
 
     }
     public void addLayoutListener(final View lineLogin, final View scroll) {
@@ -102,13 +113,6 @@ public class FindPassword extends Activity {
 
 
     private void init() {
-        /**
-         * 从缓存中取出用户ID，UID
-         */
-        SharedPreferences sharedPreferences = getSharedPreferences("data", MODE_PRIVATE);
-        uid = sharedPreferences.getString("id", "");
-        LogUtil.e("uid", uid);
-
         //启动短信验证SDK
         SMSSDK.initSDK(this, MyApplication.MobAPPID, MyApplication.MobSecret);
         EventHandler eventHandler = new EventHandler() {
@@ -123,9 +127,7 @@ public class FindPassword extends Activity {
         };
         //注册回调监听接口
         SMSSDK.registerEventHandler(eventHandler);
-
     }
-
     /**
      * 接收初始化传递过来的值
      */
@@ -149,11 +151,14 @@ public class FindPassword extends Activity {
                     if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
                         /**
                          * 提交验证码成功
-                         * 获取token传递给changepwd界面
+                         * 获取userid传递给changepwd界面
                          */
                         Intent intent = new Intent(mContext, ChangePassword.class);
+                        intent.putExtra("userid",userid);
+                        intent.putExtra("username",phone);
+                        LogUtil.e("userid", userid);
+                        LogUtil.e("username",phone);
                         startActivity(intent);
-                        finish();
                     } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                         Toast.makeText(getApplicationContext(), "验证码已发送", Toast.LENGTH_SHORT).show();
                     } else {
@@ -164,6 +169,37 @@ public class FindPassword extends Activity {
         }
     };
 
+    /**
+     * 根据传入的username获取用户ID
+     */
+    private void getuserid(String phone) {
+        RequestBody requestBody=new FormBody.Builder()
+                .add("username",phone)
+                .build();
+        OkHttpUtil.sendPostRequest(Url.getuserid, requestBody, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                LogUtil.e("e",e+"");
+            }
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                LogUtil.e("result", result);
+                JSONObject jsonObject=null;
+                try {
+                    jsonObject=new JSONObject(result);
+                    final String code=jsonObject.getString("code");
+                    LogUtil.e("code",code);
+                    if (code.equals("0")){
+                        userid=jsonObject.getString("data");
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+    }
 
     /**
      * 隐藏键盘
@@ -175,7 +211,6 @@ public class FindPassword extends Activity {
                     .hideSoftInputFromInputMethod(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
-
 
     /**
      * 判断手机号码是否合理
@@ -262,16 +297,18 @@ public class FindPassword extends Activity {
                     return;
                 } else {
                     usernameWrapper.setErrorEnabled(false);
-
                     /**
                      * 调用验证手机号码唯一
                      * 的接口
                      */
                     sendcode();
+
+                    getuserid(phone);
                 }
                 break;
-            case R.id.findpwd_btn:  //找回密码界面
+            case R.id.findpwd_btn:  //找回密码按钮的点击事件
                 code = VerfcodeWrapper.getEditText().getText().toString();
+                phone = usernameWrapper.getEditText().getText().toString();  //拿到电话号码
                 if (TextUtils.isEmpty(phone)) {
                     usernameWrapper.setError("电话号码不能为空");
                 }
@@ -280,7 +317,6 @@ public class FindPassword extends Activity {
                 } else {
                     VerfcodeWrapper.setErrorEnabled(false);
                     SMSSDK.submitVerificationCode("86", phone, code);
-
                 }
                 break;
         }

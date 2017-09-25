@@ -39,6 +39,13 @@ public class Url {
 
 
     /**
+     * 获取userid
+     */
+    public static  final String getuserid ="http://www.tedacatv.net/community/api.php?_R=Modules&_M=JDI&_C=User&_A=getUidByPhoneNumber";
+
+
+
+    /**
      * 修改密码
      * "username":"","uid":"","password":""
      */

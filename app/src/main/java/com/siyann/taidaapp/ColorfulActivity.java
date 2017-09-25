@@ -32,6 +32,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import utils.ActivityCollector;
 import utils.LogUtil;
 import utils.OkHttpUtil;
 import utils.Url;
@@ -67,6 +68,11 @@ public class ColorfulActivity extends Activity {
         setContentView(R.layout.activity_colorful);
         ButterKnife.bind(this);
         mContext=this;
+
+        /**
+         * 添加进去
+         */
+        ActivityCollector.addActivity(this);
 
         /**
          * 获取title
@@ -107,6 +113,7 @@ public class ColorfulActivity extends Activity {
                     dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            ActivityCollector.finishAll();
                             dialog.dismissWithAnimation();
                         }
                     }).show();

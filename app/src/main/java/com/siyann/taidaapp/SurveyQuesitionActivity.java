@@ -36,6 +36,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import utils.ActivityCollector;
 import utils.CheckBoxOnclick;
 import utils.LogUtil;
 import utils.OkHttpUtil;
@@ -62,7 +63,9 @@ public class SurveyQuesitionActivity extends Activity {
 
     private SweetAlertDialog dialog;
 
-    private String IDN;
+    private String IDN="";
+
+    private String Content="";
 
     private String result="";
 
@@ -81,6 +84,8 @@ public class SurveyQuesitionActivity extends Activity {
         setContentView(R.layout.activity_survey_quesition);
         ButterKnife.bind(this);
         mContext = this;
+
+        ActivityCollector.addActivity(this);
 
         /**
          * 获取传递过来的标题
@@ -124,7 +129,7 @@ public class SurveyQuesitionActivity extends Activity {
 
 
     /**
-     * CheckBox的点击事件
+     * CheckBox点击之后才显示发送按钮
      */
     private void setonclick(){
         adapter.setCheckBox(new CheckBoxOnclick() {
@@ -133,7 +138,6 @@ public class SurveyQuesitionActivity extends Activity {
                 submitText.setVisibility(View.VISIBLE);
             }
         });
-
     }
 
 
@@ -154,6 +158,7 @@ public class SurveyQuesitionActivity extends Activity {
             dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            ActivityCollector.finishAll();
                             dialog.dismissWithAnimation();
                         }
                     }).show();
@@ -260,6 +265,7 @@ public class SurveyQuesitionActivity extends Activity {
                     dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    ActivityCollector.finishAll();
                                     dialog.dismissWithAnimation();
                                 }
                             }).show();
@@ -267,13 +273,14 @@ public class SurveyQuesitionActivity extends Activity {
                 break;
         }
     }
-
     /**
      * 提交
+     * Content=1、2，2、4   题目、答案（1,2,3,4）
+     * 我要知道用户点击的是第几个CheckBox，然后就把那个CheckBox+答案的下标用一个字符串存起来
      */
     private void dosubmit() {
-        OkHttpUtil.sendOkHttpRequest
-   ("http://121.42.32.107:8001/SurveyReturn.asmx/SurveyReturnTo?UserID=FHMS&Password=FHMS2016&PID=1&Content=1、2，2、4&Name="+username+"&Date="+date+"&Type=App", new Callback() {
+        OkHttpUtil.sendOkHttpRequest("http://121.42.32.107:8001/SurveyReturn.asmx/SurveyReturnTo?UserID=FHMS&Password=FHMS2016&PID=1&Content="+Content+"+&Name="
+                +username+"&Date="+date+"&Type=App", new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
               LogUtil.e("e",e+"");

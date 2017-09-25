@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -150,7 +149,7 @@ public class MapActivity extends Activity implements LocationSource, AMapLocatio
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     init();
                 } else {
-                    Log.d("TTTT",
+                    LogUtil.d("TTTT",
                             "啊偶，被拒绝了，少年不哭，站起来撸");
                 }
                 break;

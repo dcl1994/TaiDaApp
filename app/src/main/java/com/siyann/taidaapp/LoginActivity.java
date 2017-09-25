@@ -1,5 +1,4 @@
 package com.siyann.taidaapp;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -80,13 +79,7 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mContext = LoginActivity.this;
-
-        addLayoutListener(lineLogin,login);
-
-
-        ActivityCollector.addActivity(this);
-
-
+        addLayoutListener(lineLogin, login);
     }
 
     public void addLayoutListener(final View lineLogin, final View scroll) {
@@ -132,7 +125,6 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-
     /**
      * 自定义一个帧布局显示progressbar在注册的中间
      */
@@ -168,15 +160,16 @@ public class LoginActivity extends BaseActivity {
 
     /**
      * 重写返回键
+     *
      * @param keyCode
      * @param event
      * @return
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK&&event.getRepeatCount()==0) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             ActivityCollector.finishAll();
-           return true;
+            return true;
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -305,7 +298,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     /**
-     * 登录的方法
+     * 普通登录的方法
      */
     private void dologin() {
         RequestBody body = new FormBody.Builder()
@@ -368,13 +361,13 @@ public class LoginActivity extends BaseActivity {
                                         .setContentText(msg)
                                         .setConfirmText("确定")
                                         .setCancelable(false);
-                                        pdialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                            @Override
-                                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                mProBar.setVisibility(View.GONE);
-                                                pdialog.dismissWithAnimation();
-                                            }
-                                        })
+                                pdialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        mProBar.setVisibility(View.GONE);
+                                        pdialog.dismissWithAnimation();
+                                    }
+                                })
                                         .show();
                             }
                         }

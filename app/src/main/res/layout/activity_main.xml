@@ -69,18 +69,6 @@
                 android:layout_centerVertical="true"/>
         </RelativeLayout>
 
-
-
-
-        <!--图片轮播框架-->
-        <com.youth.banner.Banner
-            android:id="@+id/banner"
-            android:layout_width="wrap_content"
-            android:layout_height="160dp"
-            app:title_textsize="14sp"
-            app:title_textcolor="#ffffff"
-            app:title_height="20dp"/>
-
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -89,6 +77,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+                <!--图片轮播框架-->
+                <com.youth.banner.Banner
+                    android:id="@+id/banner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="160dp"
+                    app:title_textsize="14sp"
+                    app:title_textcolor="#ffffff"
+                    app:title_height="20dp"/>
         <!--智能摄像头和电视直播-->
         <LinearLayout
             android:layout_width="match_parent"
@@ -113,8 +109,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/tv_bg"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="15dp"
-                />
+                android:layout_marginRight="15dp"/>
         </LinearLayout>
 
         <!--下面的内容使用点击事件来切换布局-->

@@ -27,7 +27,7 @@ public class LogUtil {
      * 使用方法：LogUtil.d(Tag,String);
      */
 
-    public static int level=NOTHING;
+    public static int level=VERBOSE;
 
 
     public static void v(String tag,String msg){

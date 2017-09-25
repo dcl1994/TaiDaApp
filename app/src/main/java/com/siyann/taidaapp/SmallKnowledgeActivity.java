@@ -32,6 +32,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import utils.ActivityCollector;
 import utils.LogUtil;
 import utils.OkHttpUtil;
 import utils.Url;
@@ -69,6 +70,7 @@ public class SmallKnowledgeActivity extends Activity {
         ButterKnife.bind(this);
         mContext=this;
 
+        ActivityCollector.addActivity(this);
         /**
          * 获取title
          */
@@ -108,6 +110,7 @@ public class SmallKnowledgeActivity extends Activity {
                     dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            ActivityCollector.finishAll();
                             dialog.dismissWithAnimation();
                         }
                     }).show();

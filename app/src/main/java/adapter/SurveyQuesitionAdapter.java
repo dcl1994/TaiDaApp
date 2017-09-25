@@ -23,7 +23,7 @@ public class SurveyQuesitionAdapter extends RecyclerView.Adapter<SurveyQuesition
     private List<SurveyQuesition> msurveyQuesitionList;
     private CheckBoxOnclick mcheckBoxOnclick;
 
-
+    private String sum="";
     static class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView surveyquesition_title;
@@ -73,14 +73,16 @@ public class SurveyQuesitionAdapter extends RecyclerView.Adapter<SurveyQuesition
             @Override
             public void onClick(View v) {
                 int position=holder.getAdapterPosition();
-                SurveyQuesition surveyQuesition=msurveyQuesitionList.get(position);
-                LogUtil.e("SurveyD_QID",surveyQuesition.getSurveyD_QID());
+                LogUtil.e("position",position+"");
+                LogUtil.e("quesitionid","1");
                 holder.checkBox01.setChecked(true);
                 holder.checkBox02.setChecked(false);
                 holder.checkBox03.setChecked(false);
                 holder.checkBox04.setChecked(false);
-
                 mcheckBoxOnclick.onclick();
+
+
+
             }
         });
 
@@ -89,14 +91,13 @@ public class SurveyQuesitionAdapter extends RecyclerView.Adapter<SurveyQuesition
             @Override
             public void onClick(View v) {
                 int position=holder.getAdapterPosition();
-                SurveyQuesition surveyQuesition=msurveyQuesitionList.get(position);
-                LogUtil.e("SurveyD_QID",surveyQuesition.getSurveyD_QID());
+                LogUtil.e("position",position+"");
+                LogUtil.e("quesitionid","2");
                 holder.checkBox02.setChecked(true);
                 holder.checkBox01.setChecked(false);
                 holder.checkBox03.setChecked(false);
                 holder.checkBox04.setChecked(false);
                 mcheckBoxOnclick.onclick();
-
             }
         });
 
@@ -105,14 +106,13 @@ public class SurveyQuesitionAdapter extends RecyclerView.Adapter<SurveyQuesition
             @Override
             public void onClick(View v) {
                 int position=holder.getAdapterPosition();
-                SurveyQuesition surveyQuesition=msurveyQuesitionList.get(position);
-                LogUtil.e("SurveyD_QID",surveyQuesition.getSurveyD_QID());
+                LogUtil.e("position",position+"");
+                LogUtil.e("quesitionid","3");
                 holder.checkBox03.setChecked(true);
                 holder.checkBox01.setChecked(false);
                 holder.checkBox02.setChecked(false);
                 holder.checkBox04.setChecked(false);
                 mcheckBoxOnclick.onclick();
-
             }
         });
 
@@ -121,14 +121,13 @@ public class SurveyQuesitionAdapter extends RecyclerView.Adapter<SurveyQuesition
             @Override
             public void onClick(View v) {
                 int position=holder.getAdapterPosition();
-                SurveyQuesition surveyQuesition=msurveyQuesitionList.get(position);
-                LogUtil.e("SurveyD_QID",surveyQuesition.getSurveyD_QID());
+                LogUtil.e("position",position+"");
+                LogUtil.e("quesitionid","4");
                 holder.checkBox04.setChecked(true);
                 holder.checkBox01.setChecked(false);
                 holder.checkBox02.setChecked(false);
                 holder.checkBox03.setChecked(false);
                 mcheckBoxOnclick.onclick();
-
             }
         });
 
@@ -147,7 +146,6 @@ public class SurveyQuesitionAdapter extends RecyclerView.Adapter<SurveyQuesition
                 holder.checkBox03.setChecked(false);
                 holder.checkBox04.setChecked(false);
                 mcheckBoxOnclick.onclick();
-
             }
         });
 
@@ -163,7 +161,6 @@ public class SurveyQuesitionAdapter extends RecyclerView.Adapter<SurveyQuesition
                 holder.checkBox03.setChecked(false);
                 holder.checkBox04.setChecked(false);
                 mcheckBoxOnclick.onclick();
-
             }
         });
 
@@ -179,7 +176,6 @@ public class SurveyQuesitionAdapter extends RecyclerView.Adapter<SurveyQuesition
                 holder.checkBox02.setChecked(false);
                 holder.checkBox04.setChecked(false);
                 mcheckBoxOnclick.onclick();
-
             }
         });
 
